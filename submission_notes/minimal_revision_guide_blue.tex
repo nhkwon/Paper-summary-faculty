@@ -1,0 +1,120 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.7in]{geometry}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\sloppy
+
+\newcommand{\loc}[1]{\textbf{Location:} #1}
+\newcommand{\current}[1]{\textbf{Current context:} #1}
+\newcommand{\replacewith}[1]{\textbf{Replace with / Add:}\\{\color{blue}#1}}
+\newcommand{\why}[1]{\textbf{Why this edit:} #1}
+
+\begin{document}
+
+\begin{center}
+{\Large Minimal Revision Guide for the Retrofit Cost Estimation Manuscript}\\
+{\small Blue text indicates the suggested replacement or addition.}
+\end{center}
+
+\section*{Edit 1. Title}
+\loc{Page 1, lines 1-2}
+
+\current{``A Hybrid Intelligent Framework for Building Retrofitting Cost Analytics: Integrating Segmented Classification with Transfer Learning-based Regressors''}
+
+\replacewith{A Segment-Aware Transfer Learning Framework for Reliable Early-Stage Cost Estimation of Building Retrofit Projects}
+
+\why{This keeps the method contribution visible but removes generic wording such as ``hybrid intelligent'' and ``regressors''. It also foregrounds the construction problem: reliable early-stage cost estimation for building retrofit projects.}
+
+\section*{Edit 2. Abstract}
+\loc{Page 1, lines 7-18}
+
+\current{The current abstract begins with ``Predicting building retrofitting costs using machine learning (ML) remains challenging...'' and ends with ``...supports more informed decision-making in the early planning stage of retrofitting projects.''}
+
+\replacewith{Reliable early-stage cost estimation is essential for building retrofit planning, yet prediction remains challenging because retrofit costs are often highly skewed and high-cost projects are underrepresented in available datasets. Conventional single-stage machine learning models may achieve acceptable overall accuracy but frequently underestimate extreme-cost projects, increasing the risk of budget shortfalls and unreliable investment decisions. To address this issue, this study proposes a segment-aware transfer learning framework for building retrofit cost estimation. The framework first classifies projects into low- and high-cost segments using a support vector machine classifier and then applies segment-specific artificial neural network regressors enhanced through transfer learning from data-rich to data-scarce cost segments. The framework was evaluated using a real-world dataset of 419 retrofit projects involving nursery schools and healthcare facilities, with direct construction costs ranging from approximately USD 5,000 to USD 800,000. Results show that the proposed framework achieved an average R$^2$ of 0.9566 and reduced MAPE and RMSE by 46\% and 25\%, respectively, compared with the best-performing single-stage baseline. The framework also reduced prediction errors for high-cost projects, mitigating the systematic underestimation observed in conventional models. SHAP analysis further revealed that insulation, window replacement, HVAC systems, and renewable energy measures were key cost-driving factors. The proposed framework provides a reliable and interpretable decision-support approach for early-stage retrofit cost planning under skewed and data-scarce conditions.}
+
+\why{This is a minimal reframing rather than a full rewrite. It makes the problem clearer before describing the algorithm: skewed retrofit costs, high-cost underestimation, and early-stage decision support.}
+
+\section*{Edit 3. Keywords}
+\loc{Page 1, line 19}
+
+\current{``Retrofitting construction, cost prediction, transfer learning, decision-making, intelligent framework''}
+
+\replacewith{Building retrofit; Cost estimation; Transfer learning; Segment-aware modeling; Decision support}
+
+\why{The revised keywords remove generic terms and align with the new title and abstract.}
+
+\section*{Edit 4. Objective Paragraph}
+\loc{Page 2, lines 63-71}
+
+\current{The paragraph begins with ``To address these limitations, this study proposes an automated two-stage framework...'' and ends with ``...relative contributions of key cost-driving factors.''}
+
+\replacewith{To address these limitations, this study proposes a segment-aware transfer learning framework for early-stage building retrofit cost estimation across a wide cost spectrum. The framework aims to improve predictive reliability for high-cost projects by first classifying projects into cost segments and then transferring knowledge from data-rich low-cost projects to data-scarce high-cost projects. Specifically, the objectives of this study are to: (i) develop a two-stage framework that integrates SVM-based cost range classification with ANN-based cost estimation; (ii) systematically evaluate multiple transfer learning strategies and cost cutoffs under data-scarce and skewed cost conditions; and (iii) interpret segment-specific cost drivers using SHAP analysis to support transparent retrofit cost decision-making.}
+
+\why{This edit keeps the original structure but aligns the objective paragraph with the new title. It also reduces the impression that the paper is only an ML model comparison.}
+
+\section*{Edit 5. Contribution Bullet 1}
+\loc{Page 3, lines 73-78}
+
+\current{The first contribution starts with ``A decision-oriented two-stage framework integrating cost range classification and TL-based regression...''}
+
+\replacewith{\textbf{A segment-aware transfer learning framework for high-cost retrofit estimation:} This study proposes a two-stage framework that combines cost range classification with transfer learning-enhanced regression for building retrofit cost estimation. By transferring knowledge from abundant low-cost projects to data-scarce high-cost segments, the framework improves predictive reliability and reduces underestimation risk for high-cost retrofit projects. The effects of different cost cutoffs and transfer learning strategies are also systematically evaluated to enhance robustness and practical applicability.}
+
+\why{This is a small wording change, but it directly names the high-cost underestimation problem and makes the contribution more reviewer-friendly.}
+
+\section*{Edit 6. Related Studies Logic Error}
+\loc{Page 5, lines 128-134}
+
+\current{``Inaccurate estimation of high-cost projects, in particular, poses a significant risk of project overfunding.''}
+
+\replacewith{Inaccurate estimation of high-cost projects, in particular, may lead to systematic underestimation, budget shortfalls, and subsequent cost overruns.}
+
+\why{``Overfunding'' conflicts with the paper's main argument. The paper argues that high-cost projects tend to be underestimated, so the risk is budget shortfall or cost overrun.}
+
+\section*{Edit 7. Methodology Data Leakage Clarification}
+\loc{Page 11, after lines 214-217}
+
+\current{The paragraph ends with ``...the data partitioning was repeated using 10 different random seeds, and results were aggregated accordingly.''}
+
+\replacewith{For each random split, preprocessing parameters and model selection procedures were estimated using the training data only, while the testing subset was held out until final evaluation. Cost cutoffs and transfer learning strategies were then evaluated within this repeated hold-out setting to avoid information leakage from the test set.}
+
+\why{Reviewers may question whether cutoffs, scaling, or GridSearchCV used test-set information. Add this only if it matches the actual analysis workflow. If not, rerun the analysis accordingly before adding the sentence.}
+
+\section*{Edit 8. Results Numerical Correction}
+\loc{Page 19, lines 403-407}
+
+\current{``...the RMSE for projects with cost $\geq$ Q3 decreases from 28,750 to 21,377...''}
+
+\replacewith{When compared with the best-performing baseline model (i.e., single ANN), the TL-enhanced two-stage framework reduces MAPE from 20.41\% to 10.95\% and overall RMSE from USD 28,750 to USD 21,377, corresponding to reductions of 46\% and 25\%, respectively. For high-cost segments, RMSE decreases from USD 41,163 to USD 34,337 for projects with cost $\geq$ Q3 and from USD 47,410 to USD 39,797 for projects with cost $\geq$ Q3 + IQR/2, corresponding to reductions of 17\% and 16\%, respectively. These results demonstrate the effectiveness of transfer learning in improving predictive reliability, particularly for high-cost retrofit projects.}
+
+\why{The current sentence incorrectly uses the overall RMSE values as if they were the Q3 segment values. This is the most important factual correction.}
+
+\section*{Edit 9. Implications Tone}
+\loc{Page 26, lines 530-536}
+
+\current{The sentence begins with ``More broadly, this study presents a general AI-driven modeling paradigm...''}
+
+\replacewith{More broadly, this study presents a data-driven decision-support approach for construction analytics problems with highly dispersed target distributions, where removing outliers may result in significant information loss. By integrating SVM-based segmentation, ANN regression, and transfer learning, the framework captures heterogeneous cost patterns, particularly in underrepresented high-cost segments.}
+
+\why{This keeps the meaning but avoids broad ``AI-driven paradigm'' wording, which may sound overstated to reviewers.}
+
+\section*{Edit 10. Conclusion Opening}
+\loc{Page 27, lines 543-548}
+
+\current{``This study proposes a TL-enhanced two-stage framework integrating SVM, ANN, and TL to improve retrofitting construction cost prediction across a wide cost range.''}
+
+\replacewith{This study developed a segment-aware transfer learning framework for reliable early-stage building retrofit cost estimation under skewed cost distributions. Using a real-world dataset with a highly right-skewed cost distribution, projects were first classified into low- and high-cost groups using SVM, followed by segment-specific ANN regressors. Transfer learning was applied to transfer knowledge from the data-rich segment to the data-scarce segment.}
+
+\why{This aligns the conclusion with the revised title and avoids starting the conclusion as a list of algorithms.}
+
+\section*{Edits to Avoid for Now}
+\begin{itemize}[leftmargin=*]
+\item Do not rewrite the whole Introduction unless the target journal specifically requests it.
+\item Do not add new claims about generalizability beyond nursery schools and healthcare facilities.
+\item Do not claim data leakage controls unless the analysis workflow actually followed them.
+\item Do not remove SHAP results; they help present the paper as decision support rather than only prediction.
+\end{itemize}
+
+\end{document}
