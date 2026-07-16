@@ -1,0 +1,1284 @@
+
+===== PAGE 1 =====
+1
+A Segment - Aware Transfer Learning Framework for Reliable Early - Stage Cost 1
+Estimation of Building Retrofit Projects 2
+Nahyun Kwon  
+a
+; Sojin Park  
+b
+,  Yonghan Ahn  
+a
+,  Ho Anh Thu Nguyen  
+b ,*
+3
+a  
+Department  of  Architectural  Engineering,  Hanyang University - ERICA, Ansan 15588, Republic of Korea 4
+b  
+Department of Smart City Engineering, Hanyang University - ERICA, Ansan 15588, Republic of Korea 5
+* Correspondence:  thunguyen98@hanyang.ac.kr 6
+Abstract 7
+Reliable early - stage cost estimation is essential for building retrofit planning, yet prediction remains 8
+challenging because retrofit costs are often highly skewed and high - cost projects are underrepresented in 9
+available datasets. Conventional single - stage machine learning models may achieve acceptable overall 10
+accuracy  but frequently underestimate extreme - cost projects, increasing the risk of budget shortfalls and 11
+unreliable  investment decisions. To address this issue, this  research  proposes a segment - aware transfer learning 12
+framework  for building retrofit cost estimation. The framework first classifies projects into low -  and high - cost 13
+segments using a support vector machine classifier and then applies segment - specific artificial neural network 14
+regressors enhanced through transfer learning from data - rich to data - scarce cost segments. The framework 15
+was  evaluated using a real - world dataset of 419 retrofit projects involving nursery schools and healthcare 16
+facilities, with direct construction costs ranging from approximately USD 5,000 to USD 800,000. Results 17
+show  that the proposed framework achieved an average R² of 0.9566 and reduced MAPE and RMSE by 46% 18
+and 25%,  respectively, compared with the best - performing single - stage baseline. The framework also reduced 19
+prediction  errors for high - cost projects, mitigating the systematic underestimation observed in conventional 20
+models. SHAP  analysis further revealed that insulation, window replacement, HVAC systems, and renewable 21
+energy measures  were key cost - driving factors. The proposed framework provides a reliable and interpretable 22
+decision - support  approach for early - stage retrofit cost planning under skewed and data - scarce conditions. 23
+Keywords:  Building retrofit; Cost estimation; Transfer learning; Segment - aware modeling; Decision support 24
+1.  Introduction 25
+As  global  awareness  of  environmental  degradation  intensifies  and  natural  resources  become 26
+increasingly scarce, the construction and operation of buildings remains one of the primary contributors to 27
+global energy consumption and greenhouse gas emissions  [1 - 3] . According to recent studies, the building 28
+
+===== PAGE 2 =====
+2
+sector accounts for approximately 40% of worldwide energy usage, with the operational phase of buildings 29
+responsible for the majority of this demand  [2, 4, 5] .  This growing energy demand highlights the importance 30
+of interventions for improving energy efficiency, particularly within the context of existing building stocks, 31
+which often exhibit outdated systems and poor thermal performance. As a result, building retrofitting 32
+approaches, such as energy - efficient renovations, and system upgrades, have emerged as a cornerstone 33
+strategy for achieving effective energy consumption and sustainability of the deteriorated buildings  [2, 6 - 8] . 34
+Beyond energy inefficiency,  deteriorated  buildings commonly experience structural deterioration and 35
+functional obsolescence  [9 - 11] , which further diminish occupant comfort and increase maintenance costs  [2, 36
+12] .  Despite the clear environmental and economic benefits, the implementation rate of retrofitting projects 37
+remains relatively low. One critical barrier lies in the uncertainty associated with project  costs. Therefore, 38
+accurate, reliable, and interpretable cost forecasting is essential for stakeholders to effectively evaluate 39
+retrofitting feasibility, secure investment, and align technical decisions with broader financial strategies  [12] . 40
+T he current cost estimation  for  retrofitting  projects  often falls short in accounting for this necessity. 41
+Traditional approaches rely heavily on historical averages, cost ratios, or expert heuristics, all of which may 42
+introduce significant biases and fail to capture the complex interplay of variables that influence construction 43
+costs. In response, a number of studies have explored data - driven alternatives, including Case - Based 44
+Reasoning (CBR)  [13] , Genetic Algorithms (GA)  [2] , and  fuzzy - based  regression model  [14] , which attempt 45
+to optimize prediction by learning and identifying key feature relationships. While these models have 46
+improved upon basic estimation techniques, they are often constrained by their dependence on specific feature 47
+structures, limited scalability, and difficulties in handling non - linear relationships and distributional extremes. 48
+To address these limitations, recent studies have employed advanced  ML  techniques such as boosting 49
+algorithms  [15]  and deep neural networks  [16 - 18] , which enhance prediction accuracy by capturing complex 50
+non - linear relationships between input variables and construction costs. Nevertheless, these  ML  models face 51
+two key challenges. First, they are often trained on datasets with limited sample sizes  [15]  or incomplete 52
+project details (i.e., limited independent variables)  [16, 18] ; in some cases, studies rely solely on generative 53
+or simulated data  [17] , lacking validation from large - scale field data. These limitations increase the risk of 54
+overfitting or underfitting. Second, the use of a single  ML  model struggles to provide accurate predictions for 55
+various projects with a wide cost range  [19, 20] .  While acceptable performance is often achieved for cost 56
+ranges that are well represented in the training data, predictions for exceptionally high - cost projects remain 57
+inaccurate  [19, 20] . This shortcoming can lead to systematic underestimation and, consequently, underfunding 58
+
+===== PAGE 3 =====
+3
+of  retrofitting  projects. Therefore, there is a clear need for modeling strategies that can robustly handle 59
+extreme cost distributions and maintain predictive reliability under data - scarce conditions. 60
+To address these limitations, this  research  proposes a segment - aware transfer learning framework for 61
+early - stage building retrofit cost estimation across a wide cost spectrum. The framework aims to improve 62
+predictive reliability for high - cost projects by first classifying projects into cost segments and then 63
+transferring knowledge from data - rich low - cost projects to data - scarce high - cost projects. Specifically, the 64
+objectives of this  research  are to: (i) develop a two - stage framework that integrates SVM - based cost range 65
+classification with ANN - based cost estimation; (ii) systematically evaluate multiple transfer learning 66
+strategies and cost cutoffs under data - scarce and skewed cost conditions; and (iii) interpret segment - specific 67
+cost drivers using SHAP analysis to support transparent retrofit cost decision - making.  T he key contributions 68
+and novelties of this paper can be summarized as follows: 69
+•  A segment - aware transfer learning framework for high - cost retrofit estimation: This  research  proposes a 70
+two - stage framework that combines cost range classification with transfer learning - enhanced regression 71
+for building retrofit cost estimation. By transferring knowledge from abundant low - cost projects to data - 72
+scarce high - cost segments, the framework improves predictive reliability and reduces underestimation 73
+risk for high - cost retrofit projects. The effects of different cost cutoffs and transfer learning strategies are 74
+also systematically evaluated to enhance robustness and practical applicability. 75
+•  Explainable  ML  to  support  transparent  and  expert - informed  decision - making:  SHAP - based 76
+interpretability is incorporated to quantify the influence of major cost - driving factors across different 77
+cost segments. This improves model transparency and helps practitioners understand how retrofit, design, 78
+and energy - related variables affect cost predictions, thereby supporting informed decision - making during 79
+early project planning . 80
+•  A  comprehensive real - world  retrofitting  cost dataset for practical decision support:  The  research  utilizes 81
+a dataset of 419 real - world retrofitting projects containing detailed building characteristics and retrofit 82
+work quantities. Covering a broad cost range, the dataset supports robust model development and 83
+enhances the practical relevance of the proposed framework for real - world retrofitting cost estimation. 84
+2.  Related studies 85
+2.1  Construction cost prediction 86
+
+===== PAGE 4 =====
+4
+With the rapid advancement of data - driven methodologies, an increasing number of studies have 87
+utilized historical datasets to develop construction cost prediction models using various estimation techniques. 88
+Table  1  summarizes representative studies by analyzing their dataset characteristics, prediction algorithms, 89
+and reported limitations. 90
+Traditional approaches such as multiple linear regression (MLR), GA, and CBR have been widely 91
+applied and have demonstrated reasonable predictive performance. For example, Kwon et al.  [12]  integrated 92
+GA with CBR to estimate the maintenance costs of residential buildings, achieving a mean absolute error of 93
+18% on the validation dataset. Nevertheless, the authors noted that the limited size of historical data could 94
+introduce significant uncertainty when predicting cases that differ substantially from previously observed 95
+projects. 96
+Methods such as MLR, GA, and CBR have been widely applied and have demonstrated reasonable 97
+predictive accuracy. For example, Kwon et al.  [12]  integrated GA with CBR to estimate the maintenance 98
+costs of residential buildings, achieving a mean absolute error of 18% on the validated dataset. However, the 99
+authors also acknowledged that the limited availability of historical data may lead to substantial uncertainty 100
+when predicting cases that differ from previously observed projects. Similar dataset - related limitations were 101
+reported by Mahmoud et al.  [21] , who employed MLR to predict the maintenance costs of aging heritage 102
+buildings. Their model was developed using only 33 data samples with three input variables. Although 103
+satisfactory performance was observed on the test set, the restricted number of variables and small dataset 104
+limit the model’s reliability and practical applicability. Furthermore, the inherent limitations of linear 105
+regression – based approaches were highlighted by Li and Guo  [22] , whose findings demonstrated that  ML 106
+algorithms generally achieve superior predictive performance compared with traditional methods due to their 107
+ability to capture complex non - linear relationships among variables. 108
+Recently, owing to their superior predictive performance and the increasing availability of data,  ML 109
+algorithms (e.g., ANN, LSTM, and SVM) have been increasingly adopted for construction cost prediction. 110
+As summarized in  Table  1 , studies employing  ML  generally utilize larger datasets and wider data ranges than 111
+those relying on traditional methods  [23 - 27] , and the number of input variables is no longer severely 112
+constrained. Nevertheless, with the exception of the study by  Kim et al.  [24] , which utilized 3,444 data 113
+samples, most existing studies still rely on fewer than 200 data points, a scale that remains insufficient for 114
+fully exploiting the learning capacity of  ML  models  [28] . In terms of algorithm selection, ANN and SVM are 115
+the most frequently employed approaches. 116
+
+===== PAGE 5 =====
+5
+However, as illustrated in the results reported  by Wu et  al.  [26]  and Al - Gahtani et al.  [27] , while these 117
+models achieve satisfactory accuracy for projects with normal cost levels, prediction errors increase 118
+substantially for extreme values at both ends of the cost spectrum.  Similar limitations of  ML  models under 119
+data - scarce conditions have been observed in other prediction tasks characterized by wide output ranges  [29 - 120
+31] . 121
+Among existing studies on construction cost prediction, only a limited number specifically address 122
+retrofitting  projects  [12, 32 - 34] .  Consistent with the broader construction cost literature, these studies 123
+commonly exhibit a noticeable degradation in predictive accuracy for high - cost projects compared with the 124
+distributions represented in their training datasets.  Inaccurate estimation of high - cost projects, in particular, 125
+may lead to systematic underestimation, budget shortfalls, and subsequent cost overruns.  Despite the practical 126
+importance of this issue, effective methodological solutions for addressing prediction uncertainty in extreme 127
+cost ranges remain lacking due to the scarcity of data on high - cost projects. 128
+Table  1 . Recent studies in construction cost prediction 129
+Ref  O bjectives  Data  Range  Method  Input  Disadvantages
+[12]  Maintenan
+ce  cost  of
+aging
+residential
+buildings
+90  3,150. 6 -
+5,254.5 USD
+CBR,
+GA
+Building  coverage  ratio,
+floor area ratio, number of
+buildings,  number  of
+floors,  number  of
+households,  parking  lots,
+maintenance  area,
+completion year
+Strong  dependence  on
+historical data
+[21]  Maintenan
+ce  cost  of
+aging
+heritage
+buildings
+33  10,000 -
+70,000 MYR
+MLR  Age  of  buildings,  gross
+floor  area,  building
+performance index
+Limited dataset size and a
+small number of variables
+[22]  Maintenan
+ce  cost  of
+aging
+university
+buildings
+-  -  LR,
+MLR,
+ANN
+Building  age,  number  of
+floors,  number  of
+classrooms, elevators
+Small  number  of  study
+objects;  strong
+dependence on historical
+data
+[23]  Maintenan
+ce  cost  of
+buildings
+100  2,500 -
+14,500 USD
+ANN  System type, system age,
+maintenance  frequency,
+building  type,
+environmental conditions
+High  implementation
+complexity; limited cost
+range
+[25]  Green
+building
+constructio
+n cost
+148  1, 400 - 3,400
+Yuan
+PCA -
+SVM
+Project  characteristics,
+green  building  attributes,
+market and location factors
+The  model  mainly
+focuses on environmental
+factors, while neglecting
+material quality and the
+professional  competence
+[26]  Green
+building
+constructio
+n cost
+126  1,400 - 3,400
+Yuan
+LSSV
+M
+Project  characteristics,
+green  building  attributes,
+market and location factors
+Large  prediction  errors
+for  projects  with  costs
+exceeding 2,800 Yuan
+
+===== PAGE 6 =====
+6
+[27]  Final
+constructio
+n cost
+135  0 -
+30,000,000
+KRW
+ANN  Area - related  variables,
+parking lots, building age
+Large  prediction  errors
+for  projects  with  costs
+exceeding  25,000,000
+KRW
+Notes:  CBR: Case - Based Reasoning; GA: Genetic Algorithm; MLR: Multiple Linear Regression; LR: Linear
+Regression; ANN: Artificial Neural Network; LSTM: Long Short - Term Memory; PCA: Principal Component
+Analysis;
+2.2  TL  in construction 130
+Recently,  TL  has emerged as an effective approach for transferring knowledge across domains to 131
+specialize models for specific prediction tasks. In the construction field,  TL  frameworks have been widely 132
+adopted to improve data efficiency by leveraging information from large source datasets. Typically, a source 133
+model is first trained on a well - represented source domain, and the learned knowledge is subsequently adapted 134
+or fine - tuned for a target domain characterized by limited data availability  [30] . 135
+In the context of energy prediction, Gao et al.  [35]  utilized high - quality building datasets to transfer 136
+knowledge for predicting energy consumption in buildings with scarce data, demonstrating that  TL 137
+frameworks based on LSTM and CNN outperformed traditional  ML  approaches.  In concrete engineering , 138
+Ford et al.  [36]  employed a large dataset of natural aggregate concrete to predict the compressive strength of 139
+recycled aggregate concrete using  TL .  Similar TL approaches have also been applied to predict the lateral 140
+strength of reinforced concrete columns  [37] , steel corrosion in concrete  [38] , and the compressive strength 141
+of ultra - high - performance geopolymer  [30] .  Beyond regression tasks,  TL  has also been extensively applied 142
+in construction - related image processing applications, including crack detection in structures  [39] , safety 143
+monitoring  [40] , and risk assessment for tunnel construction  [41] .  Collectively, these studies demonstrate that 144
+TL can significantly improve predictive performance in data - scarce scenarios, highlighting its potential for 145
+enhancing cost prediction in high - cost retrofitting projects. 146
+3.  Methodology 147
+To develop and systematically evaluate  the  TL – enhanced  two - stage  framework, this  research  follows three 148
+principal stages: data preparation, model development, and model evaluation and interpretation. The overall 149
+research workflow is illustrated in  Figure  1 . 150
+
+===== PAGE 7 =====
+7
+151
+Figure  1 . Research workflow 152
+First,  the dataset  wa s prepared and subjected to statistical  analysis , including an examination of data 153
+distributions and correlations between input and output features . This exploratory analysis informs the 154
+selection of appropriate data preprocessing  techniques  and  ML  algorithms and  further supports the 155
+identification of suitable cut - off points for developing the two - stage models. 156
+Second, to ensure a comprehensive  evaluation  of model performance,  multiple state - of - the - art algorithms 157
+were implemented, including single - stage models (i.e., CatBoost, XGBoost, monotonic GBM, and ANN) and 158
+a set of two - stage models that integrated SVM - based classification with ANN - based regression, both with 159
+and without  TL . 160
+Finally,  performance  of the models  was evaluated using  R - square score ( R² ) ,  (mean absolute percentage error) 161
+MAPE, and  root mean squared error  (RMSE)  computed over the entire test set  and  segment - wise RMSE  to 162
+further  investigate  the  predictive  performance  in  high - cost  range .  The  best - performing  model  wa s 163
+subsequently interpreted using SHAP analysis to provide insights into feature contributions and model 164
+behavior. 165
+3.1  Data  preparation 166
+
+===== PAGE 8 =====
+8
+The dataset consists of 419  retrofitting  projects involving nursery schools and health centers, with  retrofitting 167
+construction costs spanning approximately USD 5,000 to USD 800,000. It comprises 21 input s , including 168
+one categorical feature and 20 numerical features, and a n output feature  representing the  retrofitting 169
+construction cost ( Table  2 ). The input features capture key project attributes, such as building characteristics 170
+(e.g., roof area and floor area) and the quantity of energy - related components (e.g., cool - proof elements and 171
+HVAC systems). 172
+Table  2 . Statistical description of the dataset 173
+Name  Abb.  Unit  Min  Max  Mean  Std dev  Skewness
+Building  t ype
+(nursery school and
+health center)
+C1  -  -  -  -  -  -
+Year of construction
+completion  
+N1  year  1966  2015  2,004.06  7.31  - 1.70
+Construction  a rea  N2  m
+2  
+35.68  3,638.74  247.88  215.46  9.95
+Gross  f loor  a rea  N3  m
+2  
+35.68  2,997.24  387.56  379.63  3.73
+Number of  a bove -
+ground  f loors  
+N4  count  1.00  5.00  1.75  0.71  0.83
+Number of
+u nderground  f loors  
+N5  count  0.00  2.00  0.19  0.41  1.79
+External  w all
+i nsulation  
+N6  m
+2  
+0.00  2,100.00  266.54  261.04  1.38
+Internal  w all
+i nsulation  
+N7  m
+2  
+0.00  725.00  39.37  104.05  3.25
+Roof  i nsulation work
+quantity  
+N8  m
+2  
+0.00  750.00  131.87  144.56  1.08
+Floor work quantity  N9  m
+2  
+0.00  1,000.00  30.21  96.19  4.76
+Window replacement
+cost  
+N10  USD  0.00  299,347.20  24,736.65  28,972.42  5.10
+Door installation cost  N11  USD  0.00  26,020.80  2,624.40  3,583.10  2.48
+Cool  r oof work
+quantity  
+N12  m
+2  
+0.00  788.48  53.89  110.66  2.62
+Heat  r ecovery
+v entilation  s ystem
+work quantity
+N13  m
+2  
+0.00  4,070.00  202.26  306.76  6.23
+High - efficiency
+HVAC System
+installation cost
+N14  USD  0.00  135,432.00  15,578.79  16,118.77  2.66
+High - efficiency
+b oiler installation
+cost
+N15  USD  0.00  30,967.20  1,912.04  3,957.51  4.42
+LED  l ighting
+replacement work
+quantity
+N16  m
+2  
+0.00  2,800.00  132.63  245.91  5.46
+Remote  e nergy
+m etering  d evice
+installation quantity
+N17  m
+2  
+0.00  1,380.00  38.05  135.85  4.77
+Renewable  e nergy
+(solar  PV  power
+generation system)
+quantity
+N18  m
+2  
+0.00  260.00  14.62  34.22  3.34
+
+===== PAGE 9 =====
+9
+Solar  r adiation
+c ontrol  d evice  
+N19  m
+2  
+0.00  190.00  1.80  11.95  10.97
+Instantaneous  w ater
+h eater  
+N20  count  0.00  6.00  0.12  0.52  6.16
+Direct  c onstruction
+c ost (Output)  
+O  USD  5,065.87  795,941.29  148,271.19  104,937.87  2.23
+174
+Figure  2  presents the Pearson correlation matrix for the numerical input features (N1 – N20) and the output 175
+variable (O), which represents the direct construction cost.  Several features exhibit moderate to strong 176
+positive correlations with the output variable. Notably, window replacement cost (N10) shows the highest 177
+correlation with construction cost (r=0. 81 ) followed by gross floor area (N3) (r=0. 66 ), external wall insulation 178
+(N6) (r=0.6 5 ),  high - efficiency HVAC system installation cost  (N 14 ) (r=0. 59 ). These variables likely represent 179
+significant  contributors to the  total  cost  of  energy - efficient  retrofitting  projects.  Weak  or near - zero 180
+correlations are observed for features such as solar radiation control device (N19) and instantaneous water 181
+heater (N20), suggesting a limited direct impact on the construction cost within this dataset. 182
+183
+Figure  2 . Correlation heatmap of the dataset 184
+As illustrated in  Figure  3 , the distribution of  retrofitting  construction costs is strongly right - skewed, indicating 185
+the presence of a substantial number of extremely high - cost projects. In conventional single - stage modeling 186
+
+===== PAGE 10 =====
+10
+approaches, an outlier removal step is often applied to improve model stability and predictive accuracy. 187
+However, excluding high - cost projects would substantially narrow the model’s applicability, restricting it 188
+primarily to low -  and medium - cost project segments. Moreover, in practical deployment, such models are 189
+prone to systematic underestimation of high - cost projects, thereby exposing decision - makers to an increased 190
+risk of cost overruns. 191
+192
+Figure  3 . Data distribution of cost of  retrofitting  projects 193
+Therefore, this  research  adopt ed  a two - stage framework  to partition projects into two cost segments, 194
+thereby enabling the use of segment - specific predictive models and avoiding the need to exclude extremely 195
+high - cost projects from the analysis. A critical step in developing an effective two - stage model is the 196
+identification of an appropriate cost cutoff.  Projects with costs below a specified cut - off point are classified 197
+as low - cost, while those with costs equal to or greater than the cut - off point are categorized as high - cost. 198
+The selection of the  cutoffs  (including the mean, the third quartile (Q3), and an adjusted upper threshold 199
+( Q3 + IQR/ 2 ) ), was motivated by two complementary considerations. First, the mean cost was adopted to 200
+prioritize class balance, thereby ensuring robust SVM training and stable classification performance  [42] . 201
+Second, Q3 and Q3 + IQR/2 were introduced to investigate the effectiveness of  TL  when knowledge was 202
+transferred from a data - rich domain (low - cost segment) to a data - scarce domain (high - cost segment).  The 203
+data segmentation for each cutoff strategy is summarized in  Table  3 . 204
+Table  3 . Description of  different  cutoff s 205
+Cutoff  Value (USD)  Number of low - cost projects  Number of high - cost projects
+Mean  148,271  243  176
+Q3  180,676  314  105
+Q3+IQR/2  228,626  352  67
+
+===== PAGE 11 =====
+11
+For each random split, preprocessing parameters and model selection procedures were estimated using the 206
+training data only, while the testing subset was held out until final evaluation. Cost cutoffs and transfer 207
+learning strategies were then evaluated within this repeated hold - out setting to avoid information leakage 208
+from the test set. 209
+3.2  Model development 210
+The  processed  data was used for  develop ing  two categories of predictive models: single - stage models and 211
+two - stage models. The single - stage models comprise tree - based algorithms (i.e., CatBoost, XGBoost, and 212
+monotonic GBM) and neural network – based models (i.e., ANN). 213
+To ensure a fair and consistent comparison across models, GridSearchCV  wa s employed to systematically 214
+fine - tune the hyperparameters of all candidate models. 215
+3.2.1  S ingle  models 216
+CatBoost 217
+CatBoost is a GBDT - based algorithm designed for classification and regression tasks. It distinguishes itself 218
+from other GBDT methods through key innovations such as ordered boosting and efficient handling of 219
+categorical features  [43] . Traditional GBDTs suffer from prediction shift due to using the same data for 220
+gradient estimation and model building, leading to target leakage  [44] . CatBoost addresses this with an 221
+ordered boosting scheme that reduces gradient bias and overfitting. For categorical features, it replaces 222
+conventional preprocessing (e.g., one - hot encoding) with a modified target statistics approach that 223
+leverages random permutations and averaging across iterations  [45] . Additionally, CatBoost employs 224
+oblivious trees (symmetric, balanced trees with uniform splitting rules) which enhance inference speed and 225
+reduce overfitting risk  [46] . 226
+XGBoost 227
+With changes to the loss function and loss  optimization procedure , XGBoost  [47]  outperforms traditional 228
+gradient boosting algorithms. XGBoost is versatile, supporting classification, with regression, ranking, and 229
+user - defined functions, as well as distributed training across multiple machines. It is dedicated to pushing 230
+boosting trees past their computational limit, allowing engineers to achieve the engineering goals of faster 231
+computation and excellent performance. 232
+Monotonic GBM 233
+
+===== PAGE 12 =====
+12
+To establish a robust and domain - consistent baseline for wide - range construction cost prediction, a 234
+monotonic GBM was implemented. The model incorporates prior engineering knowledge by enforcing 235
+monotonic relationships between selected size -  and quantity - related variables and project cost, thereby 236
+improving stability and interpretability. 237
+Let x =  (x 1 ,x 2 ,…x d )  d enote the input feature vector and y the construction cost. The GBM prediction model 238
+is expressed as: 239
+𝑦 ̂  =  𝑓 ( 𝑥 )  =  ∑  𝛾
+𝑚
+ℎ
+𝑚
+( 𝑥 )
+𝑀
+𝑚 = 1
+( 1 ) 240
+Where h m (.) represents a regression tree at boosting iteration m, and  𝛾
+𝑚  
+is its  corresponding  weight. 241
+Monotonicity constraints were applied to selected numerical features  S={N3, N4, N6, N8, N10, N16}, 242
+representing project scale and quality indicators, such that: 243
+𝜕𝑓 ( 𝑥 )
+𝜕 𝑥
+𝑗
+≥  0  ( 2 ) 244
+This ensures that predicted costs do not decrease as these variables increase, while unconstrained features 245
+retain modeling flexibility. 246
+ANN 247
+ANN is a nonlinear computational model inspired by the structural and functional framework of the human 248
+brain.  In ANNs, information is transmitted through interconnected neurons, where each input is assigned, 249
+a weight representing its contribution to the output. The weighted inputs are combined and processed 250
+through activation functions before being propagated to subsequent layers. Through iterative training, the 251
+network adjusts its weights to minimize prediction error, and the process continues until a satisfactory error 252
+level, or the maximum number of iterations is reached. 253
+This  research  employed ANNs both as a baseline single - stage model and as the regression component of 254
+the proposed two - stage framework. In the single - stage setting, the ANN was trained using the entire cost 255
+range without segmentation. The network architecture was optimized through grid - based hyperparameter 256
+tuning, which systematically adjusted key model parameters to minimize validation error. Accordingly, the 257
+ANN structure was configured as follows: 258
+Input Layer :  All numerical features and one - hot encoded categorical features  were  normalized using Min - 259
+Max scaling and fed into the input layer . 260
+Hidden Layers :  The network architecture  was  selected from a predefined set of candidate configurations : 261
+
+===== PAGE 13 =====
+13
+•  A single hidden layer with 64 or 128 neurons, and 262
+•  A two hidden - layer architecture with 128 and 64 neurons, respectively. 263
+Output Layer :  Model training  wa s performed using the Adam optimizer, with the initial learning rate 264
+selected from  [ 1e - 4, 1e - 3, 1e - 2, 5e - 2 ]  and the batch size was selected from [32, 64].  The optimization 265
+objective  wa s the mean square error ( mse ). 266
+3.2.2  Two - stage models 267
+The two - stage framework consists of three principal components: (i) a cost - based project classification 268
+model implemented using  an  SVM, (ii) an ANN regressor for low - cost projects, and (iii) an ANN regressor 269
+for high - cost projects. To explicitly isolate and examine the effect of  TL , this  research  develop ed  two 270
+variants of the two - stage framework: one without and one with  TL . 271
+Two - stage model without  TL 272
+In the first stage ,  an SVM classifier was employed to partition  retrofitting  projects into low - cost and high - 273
+cost categories  (illustrated in  Figure  4 ).  This segmentation was intended to enhance predictive performance, 274
+particularly for extreme - cost projects, which are often inadequately captured by a single regression model 275
+trained over the entire cost spectrum. The classification threshold  was  defined using three alternative 276
+cutoff s  (i.e., mean, Q3, Q3+IQR/2) , as defined in Section 3.1 . 277
+278
+Figure  4 . Components of  the t wo - stage model without  TL 279
+In the two - stage model, the  SVM aims to identify an optimal hyperplane that separates classes while 280
+maximizing the margin  γ  between them by solving a convex optimization problem, as described in Eqs. 281
+(3) – (6). The margin is defined as: 282
+𝛾  =  
+2
+‖ 𝑤 ‖  
+( 3 ) 283
+
+===== PAGE 14 =====
+14
+x, its decision function is given by: 284
+𝑑  =  𝑓 ( 𝑤
+𝑇  
+𝑥  +  𝑏 )  ( 4 ) 285
+The  optimization  objective is: 286
+𝑚𝑖𝑛𝑖𝑚𝑖𝑧𝑒
+𝑤 , 𝑏  
+=  
+1
+2  
+‖ 𝑤
+2
+‖  ( 5 ) 287
+Subject to: 288
+𝑦
+𝑖  
+( 𝑤
+𝑇  
+𝑥
+𝑖  
++  𝑏 )  ≥  1 ,  𝑓𝑜𝑟  𝑖  =  1 , 2 ,  …  ( 6 ) 289
+For predicting  retrofitting  construction cost, the low - cost and high - cost ANN regressors were trained 290
+independently from scratch, without any parameter sharing or weight initialization between the two cost 291
+segments. The architectural components and data flow of this transfer - free two - stage framework are 292
+illustrated in  Figure  4 . 293
+TL - enhanced t wo - stage model 294
+Although the two - stage model without transfer learning (TL) can alleviate some challenges associated with 295
+wide - range cost modeling, it still has several limitations. Dividing the dataset into two subsets reduces the 296
+training samples available for each regression model, increasing the risk of overfitting, particularly for 297
+high - cost projects characterized by sparse and highly variable data. In addition, prediction errors may be 298
+amplified when the first - stage SVM misclassifies projects into incorrect cost segments .  To address these 299
+issues,  TL  was incorporated to exploit shared information across cost segments and enhance cross - domain 300
+knowledge transfer, thereby reducing sensitivity to segmentation errors.  To overcome these issues, TL was 301
+incorporated to leverage shared information across cost segments and improve prediction robustness. 302
+Specifically, the ANN trained on the low - cost segment was used as a source model to transfer learned 303
+representations to the high - cost ANN, thereby enhancing performance in the data - scarce high - cost domain. 304
+Unlike conventional ML approaches that train models independently, TL reuses knowledge from a pre - 305
+trained source model to improve prediction accuracy under limited - data conditions  [30] . 306
+Formally, a domain is defined as  𝐷  =  { 𝑋 ,  𝑝 ( 𝑋 ) }  , where  𝑋  denotes the feature space comprising input 307
+variables (e.g., number of ground floors, floor area), and  𝑝 ( 𝑋 )  represents the marginal probability 308
+distribution over  𝑋 . A task associated with a domain is defined as  𝑇  =  { 𝑌 ,  𝑓 ( ⋅ ) } , where  𝑌  is the label space 309
+(i.e., construction cost) and  𝑓 ( ⋅ )  denotes the predictive function to be learned.  Given a source domain  𝐷
+𝑠
+310
+
+===== PAGE 15 =====
+15
+with its corresponding task  𝑇
+𝑠
+, and a target domain  𝐷
+𝑡  
+with task  𝑇
+𝑡
+, the objective of  TL  is to improve the 311
+target predictive function  𝑓
+𝑇
+( ⋅ )  in  𝐷
+𝑡  
+by transferring knowledge learned from  𝐷
+𝑠  
+and  𝑇
+𝑠
+. 312
+In the proposed  TL - enhanced two - stage framework, the SVM classifier and the low - cost ANN (denoted as 313
+𝑓
+𝜃 𝑠  
+( 𝑥 ) ) were constructed identically to those in the two - stage models without  TL . For high - cost prediction, 314
+a new ANN (denoted as  𝑓
+𝜃 𝑡  
+( 𝑥 ) ) was initialized by cloning the network architecture and copying the learned 315
+parameters from the pre - trained low - cost ANN, such that  𝜃
+𝑡
+0  
+←  𝜃
+𝑠
+. This initialization ensured that the high - 316
+cost ANN started from a functionally meaningful solution, rather than from random weights. 317
+To regulate the extent of knowledge transfer and domain adaptation, multiple  TL  strategies were examined 318
+by selectively freezing early network layers. The early layers, which capture more general feature 319
+representations, were retained as fixed, while the deeper layers were fine - tuned to learn cost - segment - 320
+specific characteristics associated with high - cost projects. Formally, the parameter set of the target model 321
+was partitioned into frozen and trainable subsets,  𝜃
+𝑡  
+=  { 𝜃
+frozen
+,  𝜃
+trainable
+}  . During optimization, gradient 322
+updates were applied only to  𝜃
+trainable
+, whereas  𝜃
+frozen
+remained unchanged. 323
+Based on this framework, three  TL  strategies  were evaluated: 324
+•  Conservative transfer: most hidden layers frozen, small learning rate. 325
+•  Balanced transfer: partial freezing with moderate learning rate. 326
+•  Aggressive transfer: all  layers  trainable , allow full adaptation. 327
+3.3  Model evaluation 328
+Model performance was evaluated using four metrics: R
+2
+, RMSE, and MAPE, along with visual comparisons 329
+of predicted versus observed values. These collectively offer a comprehensive view of predictive accuracy. 330
+R² quantifies the proportion of variance in the target variable explained by the model. As shown in Eq. ( 7 ), y i 331
+is the observed value,  𝑦 ̂
+𝑖  
+is the predicted value, and ȳ  i  is the mean of the observed values. R² ranges from 0 332
+to 1, with higher values indicating better model performance, though it should be interpreted alongside other 333
+metrics due to its sensitivity to variance. 334
+𝑅
+2  
+=  1  −  
+∑  ( 𝑦
+𝑖  
+−  𝑦 ̂
+𝑖
+)
+2
+𝑖
+∑  ( 𝑦
+𝑖  
+−  𝑦 ̅
+𝑖
+)
+2
+𝑖
+( 7 ) 335
+RMSE, defined in Eq. ( 8 ),  quantifies the average magnitude of prediction errors and assigns greater penalties 336
+to large errors . 337
+
+===== PAGE 16 =====
+16
+𝑅𝑀𝑆𝐸  =  √
+1
+𝑛  
+∑  ( 𝑦
+𝑖  
+−  𝑦 ̂
+𝑖
+)
+2
+𝑛
+𝑖 = 1
+( 8 ) 338
+MAPE evaluates the average percentage error, calculated in Eq. ( 9 ) . 339
+𝑀𝐴𝑃𝐸  =  
+1
+𝑛  
+∑  |
+𝑦
+𝑖  
+−  𝑦 ̂
+𝑖
+𝑦
+𝑖
+|
+𝑛
+𝑖 = 1
+( 9 ) 340
+3.4  Model interpretation with SHAP 341
+Due to the complexity of the proposed TL - enhanced two - stage framework, post hoc interpretability was 342
+required to explain the prediction behavior of the low -  and high - cost models. Accordingly, SHAP, based on 343
+Shapley values from cooperative game theory, was employed to quantify the contribution of each input feature 344
+to the model output  [48] .  By evaluating each feature’s marginal contribution across different feature 345
+combinations, SHAP provides consistent and theoretically grounded model interpretations. 346
+The SHAP explanation model is expressed in Eq. ( 10 ): 347
+q ( s )  =  θ
+o  
++  ∑  θ
+j
+s
+j′
+M
+j = 1
+( 10 ) 348
+where  q ( s )  denotes the model,  M  is the total number of input features,  θ
+j  
+represents the SHAP value 349
+associated with the  j - th feature, and  θ
+0  
+is a model constant. 350
+4.  Results  and discussion 351
+4.1  Model  performance 352
+The average performance of all models in test set across 10 different random seeds is summarized in  Table  4 . 353
+For the single - model group, RMSE values range from 28,750 to 45,598 (USD), with the models explaining 354
+approximately 80.77% to 91.73% of the variance in the test set. Although the overall predictive performance 355
+of these models is generally acceptable, their segment - wise performance deteriorates substantially for high - 356
+cost projects. In particular, when the project cost exceeds Q3, the RMSE increases to 75,394, and further 357
+escalates to 90,029 when the cost exceeds Q3 + IQR/2, as observed for the Monotonic GBM model. This 358
+degradation can be attributed to the presence of extreme cost values that are retained in the dataset rather than 359
+removed as outliers, which disproportionately affects model accuracy in high - cost segments. Notably, 360
+although Monotonic GBM incorporates domain knowledge – based monotonic constraints, these constraints 361
+do not result in superior performance compared with other single models. 362
+
+===== PAGE 17 =====
+17
+Among the single models, XGBoost, CatBoost, and ANN consistently outperform Monotonic GBM across 363
+all evaluation metrics. The ANN model exhibits the strongest performance, achieving an average R² of 0.9173 364
+with a noticeably smaller standard deviation across random seeds compared with other single models. Its 365
+MAPE is reduced to 20.41 ± 6.92 (%), and both the overall RMSE and segment - wise RMSE values are 366
+substantially lower than those of the boosting - based models. These results indicate that ANN - based 367
+approaches are more robust to wide - range cost distributions and extreme values than tree - based boosting 368
+algorithms. The superiority of the ANN model is further illustrated in  Figure  5 . While CatBoost, XGBoost, 369
+and Monotonic GBM exhibit lower average performance and higher variability across random seeds, the 370
+ANN model demonstrates consistently higher accuracy with reduced performance dispersion, highlighting 371
+its stability and suitability for  retrofitting  cost prediction under heterogeneous cost conditions. 372
+Table  4 . Performance of single and two - stage models 373
+Model  Cut off  
+Transfer
+strategy  
+R²  
+MAPE
+(%)  
+RMSE  
+RMSE
+> Q3
+RMSE >
+Q3+IQR/2
+CatBoost  
+0.8789 ±
+0.08
+15.38 ±
+1.49
+35,718 ±
+13,735  
+62,782  75,493
+XGBoost  
+0.8675 ±
+0.04
+16.00 ±
+2.64
+37,888 ±
+9,780  
+66,928  80,457
+Monotonic
+GBM
+0.8077 ±
+0.06
+26.75 ±
+3.19
+45,598 ±
+11,897  
+75,394  90,029
+ANN  
+0.9173 ±
+0.03
+20.41 ±
+6.92
+28,750 ±
+4,161  
+41,163  47,410
+Two - stage
+no
+transfer
+Mean  
+0.8617 ±
+0.09
+18.99 ±
+7.74
+35,488 ±
+9,933  
+44,755  53,035
+Q3  
+0.8740 ±
+0.09
+18.88 ±
+7.78
+33,734 ±
+10,07  
+40,609  47,806
+Q3+IQR/2  
+0.8639 ±
+0.09
+18.49 ±
+7.45
+35,575 ±
+9,926  
+46,813  56,142
+Two - stage
+transfer
+Mean  Conservative  
+0.9568 ±
+0.01
+10.79 ±
+1.03
+21,360 ±
+3,084  
+34,514  40,195
+Balanced  
+0.9566 ±
+0.01
+10.95 ±
+1.12
+21,377 ±
+2,840  
+34,337  39,797
+Aggressive  
+0.9519 ±
+0.02
+11.25 ±
+1.35
+22,068 ±
+2,810  
+34,998  41,994
+Q3  Conservative  
+0.9506 ±
+0.01
+12.37 ±
+1.86
+22,788 ±
+3,310  
+38,032  44,628
+Balanced  
+0.9508 ±
+0.01
+12.74 ±
+2.03
+22,584 ±
+2,495  
+37,309  43,041
+Aggressive  
+0.9370 ±
+0.03
+14.26 ±
+3.23
+24,912 ±
+3,612  
+39,153  46,276
+Q3+IQR/2  Conservative  
+0.9520 ±
+0.01
+12.29 ±
+2.01
+22,404±
+2,679  
+37,396  44,173
+Balanced  
+0.9546 ±
+0.01
+12.46 ±
+2.06
+21,722 ±
+2,042  
+35,786  42,010
+Aggressive  
+0.9334 ±
+0.04
+13.48 ±
+3.18
+25,460 ±
+5,809  
+42,185  50,714
+374
+
+===== PAGE 18 =====
+18
+For the two - stage model group, the models without TL achieve R² values ranging from 0.86 to 0.87, which is 375
+comparable to the performance of CatBoost and XGBoost.  Interestingly , when focusing on high - cost project 376
+segments (≥ Q3 and ≥ Q3 + IQR/2), the two - stage models without TL exhibit substantially lower RMSE, as 377
+illustrated in  Figure  5 (c) and (d). This improvement can be attributed to cost - based segmentation, which mitigates 378
+the influence of extreme values by separating projects into distinct cost ranges, thereby enabling more stable 379
+learning for high - cost cases.  For two - stage models without TL , varying the cutoffs used for cost segmentation 380
+does not result in pronounced performance differences  ( Table  4 ) . Nevertheless, despite these improvements in 381
+high - cost segments, splitting the dataset significantly reduces the number of training samples available for each 382
+model, which in turn limits the learning capacity of the regressors. As a consequence, the overall predictive 383
+performance of the two - stage models without  TL  remains inferior to that of the single ANN model, as evidenced 384
+in  Figure  5  (a) and (b). 385
+386
+Figure  5 .  Comparison of the predictive performance of different models. 387
+Note: Due to the large number of cutoffs and TL strategies, the two - stage models are represented by (1) a two - 388
+stage framework without TL using the mean cost as the cutoff, and (2) a TL - enhanced two - stage framework 389
+using the mean cost as the cutoff, to facilitate clearer comparison across model groups. 390
+Compared with the single models and the two - stage models without TL, the proposed TL - enhanced two - stage 391
+models consistently achieve the best predictive performance, regardless of the selected TL strategy or cost cutoff. 392
+Among the evaluated two - stage TL strategies, the model combining the mean - based cutoff with the balanced TL 393
+strategy yields the highest average performance.  When compared with the best - performing baseline model (i.e., 394
+
+===== PAGE 19 =====
+19
+single ANN), the TL - enhanced two - stage framework reduces MAPE from 20.41% to 10.95% and overall RMSE 395
+from USD 28,750 to USD 21,377, corresponding to reductions of 46% and 25%, respectively. For h igh - cost 396
+segments, RMSE decreases from USD 41,163 to USD 34,337 for projects with  cost  ≥  Q3 and  from USD 47,410 397
+t o USD 39,797 for projects with cost  ≥  Q3 + IQR/2, corresponding to reductions of 17% and 16%, respectively. 398
+T hese results demonstrate the effec tiveness of transfer learning in improving predictive reliability, particularly for 399
+high - cost retrofit projects. 400
+Figure  6  compares the residual distributions of the TL - enhanced two - stage model and the single ANN. The 401
+residuals of the two - stage transferred ANN are largely concentrated within the range of  – 100,000 to 100,000 402
+(USD), whereas the single ANN exhibits substantially larger errors, with residuals extending to approximately  – 403
+200,000 to 200,000. Residuals are defined as the difference between the observed values ( y ₜₑₛₜ ) and the predicted 404
+values ( y pred ). The observed pattern indicates that the single ANN tends to overestimate costs for low - cost projects 405
+and underestimate costs for high - cost projects, a systematic bias that is effectively mitigated by the proposed  TL - 406
+enhanced  two - stage framework. 407
+408
+Figure  6 . Residual of  (a)  single ANN and  (b)  two - stage transferred model (using balanced TL and mean - based 409
+cutoff) per cost segment 410
+The comparison in  Figure  7  indicates that the two - stage transferred model achieves superior performance 411
+compared to the single ANN model.  T he two - stage model more accurately follows the trend of the actual data, 412
+capturing both peaks and local fluctuations. Meanwhile, the single ANN model frequently underestimates extreme 413
+values, reflecting weaker generalization capability. 414
+
+===== PAGE 20 =====
+20
+415
+Figure  7 . Prediction in a single random seed of single ANN and two - stage transferred model (using balanced TL 416
+and mean - based cutoff) per cost segment 417
+Overall, the TL - enhanced two - stage models consistently outperform the baseline models. However, their average 418
+predictive performance varies depending on the selected TL strategy and cost cutoff, indicating that the effects of 419
+these two factors warrant further investigation to establish a generalizable and robust framework. 420
+Regarding the impact of cost cutoffs, a Wilcoxon signed - rank test was conducted to examine whether performance 421
+differences among models using different cutoff values are statistically significant. The results, summarized in 422
+T able  5 , show that models employing the mean - based cutoff exhibit statistically significant performance 423
+differences compared with those using Q3 and Q3 + IQR/2 cutoffs, with all evaluation metrics yielding p - values 424
+below 0.05. In contrast, no statistically significant differences are observed between the models using Q3 and Q3 425
++ IQR/2 cutoffs. Combined with the performance results presented in  Table  4 , these findings indicate that the 426
+mean - based cutoff provides the most favorable and stable performance among the three cutoffs evaluated. 427
+T able  5 .  p - values from the Wilcoxon signed - rank test for two - stage transferred models with different cutoff 428
+thresholds 429
+Metric  Mean  and  Q3  Mean  and Q3+ IQR /2  Q3  and Q3+ IQR /2
+R
+2  
+1.19E - 06  5.38E - 03  1.46E - 01
+RMSE  1.19E - 06  7.11E - 03  1.40E - 01
+MAPE  1.86E - 09  3.15E - 07  2.05E - 01
+RMSE  (cost >  Q3 )  3.79E - 06  1.60E - 05  6.26E - 01
+RMSE  (cost >  Q3 + IQR /2)  1.19E - 06  3.45E - 05  7.77E - 01
+The results in  Table  4  indicate that the selection of cost cutoff primarily affects model performance in the high - 430
+cost segments, as the RMSE values for projects with cost ≥ Q3 and cost ≥ Q3 + IQR/2 exhibit more pronounced 431
+differences than the RMSE computed over the entire dataset. To further investigate the influence of cutoff selection, 432
+its impact on the SVM - based cost range classification was analyzed. 433
+
+===== PAGE 21 =====
+21
+Figure  8  presents the classification performance of the SVM models under different cutoff strategies. The SVM 434
+using the Q3 + IQR/2 cutoff achieves the highest precision, occasionally approaching a value of 1.0. However, 435
+this comes at the expense of low recall and high variability across runs, resulting in an unstable F1 - score. In 436
+contrast, the Q3 cutoff yields the lowest average precision, recall, and F1 - score among the three cutoff strategies. 437
+The mean - based cutoff provides a more balanced trade - off between precision and recall. Although its precision is 438
+lower than that of the Q3 + IQR/2 cutoff, it achieves the highest average F1 - score with the lowest variability, 439
+indicating more stable and reliable classification performance. These results suggest that the mean cutoff 440
+represents the safest and most robust choice among the evaluated cutoff strategies for cost range classification 441
+within the proposed two - stage framework. 442
+443
+Figure  8 . Classification performance of SVM using different cutoffs 444
+The observed differences among the SVM classifiers using different cutoffs can be attributed primarily to class 445
+distribution effects. As illustrated in  Figure  9 ,  the mean - based cutoff provides a relatively balanced distribution 446
+between low -  and high - cost projects, whereas the Q3 and Q3 + IQR/2 cutoffs create increasingly imbalanced 447
+ratios of approximately 75:25 and 84:16, respectively. This imbalance causes high - cost projects to be more 448
+frequently misclassified as low - cost, leading to error propagation in the second - stage regressors. Consequently, 449
+models using highly imbalanced cutoffs exhibit higher RMSE in the high - cost segment. In contrast, the mean - 450
+based cutoff reduces misclassification risk and provides more stable prediction performance for high - cost projects. 451
+
+===== PAGE 22 =====
+22
+452
+Figure  9 .  Class distributions of low - cost and high - cost projects under different cutoffs 453
+Regarding the influence of TL strategies, the models were grouped according to the adopted TL strategy and 454
+evaluated using the Wilcoxon signed - rank test to examine whether different strategies lead to statistically 455
+significant differences in predictive performance. The results reported in  Table  6  indicate that the model 456
+employing the balanced TL strategy achieves significantly improved prediction performance in the high - cost 457
+segments, with p - values below 0.05 for RMSE when cost ≥ Q3 and cost ≥ Q3 + IQR/2, compared with the other 458
+strategies.  In  contrast,  the  conservative  and  aggressive  strategies  do  not  show  statistically  significant 459
+improvements. The conservative strategy relies too heavily on knowledge transferred from low - cost data, limiting 460
+adaptation to high - cost project characteristics, whereas the aggressive strategy retains insufficient pre - trained 461
+knowledge, reducing generalization capability and resulting in the highest average RMSE in the high - cost region . 462
+Table  6 .  p - values from the Wilcoxon signed - rank test for two - stage transferred models with different TL strategies 463
+Metric  
+Conservative vs
+Balanced
+Conservative vs
+Aggressive
+Balanced vs
+Aggressive
+R
+2  
+1.58E - 01  2.99E - 03  1.23E - 0 3
+RMSE  1.46E - 01  1.13E - 02  2.196E - 03
+MAPE  2.55E - 07  7.98E - 04  6.19 E - 03
+RMSE (cost > Q3)  2.93E - 02  1.52E - 01  4.27 E - 02
+RMSE (cost > Q3+IQR/2)  3.22E - 03  1.14E - 01  2.34 E - 02
+464
+4.2  Model interpretation 465
+T he TL - enhanced two - stage model using balanced TL with a mean - based cutoff was further analyzed using SHAP. 466
+First, the behavior of the SVM classifier was examined, as illustrated in  Figure  10 . The results indicate that 467
+insulation - related features, including N6 (external wall insulation), N8 (roof insulation work quantity), and N14 468
+(high - efficiency HVAC system installation cost), exert the strongest influence on the classification outcome. 469
+Higher values of these features substantially increase the likelihood that a project is classified into the high - cost 470
+
+===== PAGE 23 =====
+23
+category. In addition, building type plays a significant role in the classifier’s decision - making process: nursery 471
+buildings tend to be classified as high - cost, whereas healthcare centers are more frequently assigned to the low - 472
+cost category. In contrast, features related to  construction  area and time, such as N9 (floor work quantity), N3 473
+(gross floor area), N19 (solar radiation control device), and N1 (year of completion), exhibit relatively weaker 474
+contributions to the SVM’s classification decisions. 475
+476
+Figure  10 . SHAP values of the SVM  classifier 477
+Figure  11  illustrates the SHAP summary plots of the ANN regressors for low - cost and high - cost projects, revealing 478
+both shared patterns and segment - specific differences in feature influence. In the low - cost ANN, the model is 479
+primarily driven by envelope -  and insulation - related variables, with N6 (external wall insulation), N14 (high - 480
+efficiency HVAC system installation cost), N10 (window replacement cost), and N8 (roof insulation work quantity) 481
+occupying the top positions in the importance ranking. These variables exhibit wide SHAP distributions and clear 482
+monotonic trends, indicating their dominant and stable contribution to cost prediction in lower - budget projects. 483
+When transitioning to the high - cost ANN, although N6 remains the most influential feature, notable reordering 484
+among the top - ranked variables is observed. Specifically, N10 and N14 exchange relative positions, while N7 485
+(internal wall insulation) and N18 (renewable energy system installation quantity) move upward in the ranking. 486
+This shift indicates that high - cost projects place greater emphasis on integrated insulation strategies and energy - 487
+generation systems rather than solely on basic envelope upgrades. Moreover, energy - related variables such as N18 488
+
+===== PAGE 24 =====
+24
+(solar PV installation quantity), N15 (high - efficiency boiler installation cost), and N16 (LED lighting  replacement 489
+quantity) show increased SHAP dispersion and higher positive contributions in the high - cost segment compared 490
+to the low - cost model. Although their absolute SHAP magnitudes remain smaller than those of major insulation 491
+variables, their elevated ranking reflects a change in the dominant cost formation mechanism, where advanced 492
+energy retrofit measures play a more critical role. 493
+These  differences in feature importance  provide strong support  for  the proposed two - stage  framework, 494
+demonstrating that separate ANN regressors can better capture distinct cost formation mechanisms across low - 495
+and high - cost project segments . 496
+497
+Figure  11 . SHAP values of the ANN regressor for low - cost projects  and high - cost projects 498
+Overall, the SHAP interpretation indicates that the ANN models prioritize input variables in a manner consistent 499
+with the practical sequence and technical importance of  retrofitting  activities rather than relying on abstract 500
+building descriptors. Envelope -  and insulation - related measures, such as external wall insulation, window 501
+replacement, and roof insulation, consistently emerge as the most influential factors, reflecting their role as early - 502
+stage interventions that establish the thermal and structural basis for subsequent upgrades and largely determine 503
+the overall  retrofitting  cost. As the  retrofitting  process progresses, energy system – related measures (e.g., including 504
+high - efficiency HVAC systems, boilers, and renewable energy installations) gain influence, particularly in high - 505
+cost projects, aligning with real - world construction workflows in which mechanical and electrical upgrades are 506
+implemented after envelope performance has been secured. In contrast, conventional descriptors such as 507
+
+===== PAGE 25 =====
+25
+construction year, total floor area, and number of stories exhibit limited contributions across both cost segments, 508
+suggesting that  retrofitting  costs are governed more by the type, sequence, and technical complexity of retrofit 509
+measures than by building scale alone. 510
+5.  I mplications 511
+The results demonstrate that the proposed TL - enhanced two - stage model provides reliable and accurate 512
+predictions, achieving an average R² of 0.9566 on the test set and substantially reducing RMSE for high - cost 513
+project segments compared with conventional models. Beyond predictive performance, the framework offers 514
+several practical implications for data - driven decision - support in construction management. 515
+The two - stage architecture is particularly effective for early - stage retrofitting cost estimation, where detailed cost 516
+information is often unavailable  ( Figure  12 ).  By separating low -  and high - cost projects, the framework reduces 517
+the risk of cost underestimation in high - value projects and supports more reliable planning decisions. Correlation 518
+and SHAP analyses further show that the “year of completion” has limited influence on predictions, indicating 519
+temporal robustness, while cost - sensitive retrofit variables such as window, door, and HVAC replacement better 520
+capture changes in material, labor, and construction practices over time. 521
+Although validated on nursery and healthcare buildings, the framework is scalable to other building types and 522
+regional contexts through retraining with locally relevant datasets and recalibration of cost - related variables. 523
+SHAP - based interpretability also provides a mechanism to verify whether learned cost patterns remain consistent 524
+across different applications. More broadly, this  research  presents a general AI - driven modeling paradigm for 525
+construction analytics problems with highly dispersed target distributions, where removing outliers may result in 526
+significant information loss. By integrating SVM - based segmentation, ANN regression, and transfer learning, the 527
+framework effectively captures heterogeneous cost patterns, particularly in underrepresented high - cost segments. 528
+However, successful application requires careful adaptation of segmentation thresholds and TL strategies to local 529
+data characteristics, along with rigorous evaluation of the classification stage and post - hoc interpretability analysis 530
+to ensure transparent and reliable deployment in construction decision - support systems  ( Figure  12 ). 531
+
+===== PAGE 26 =====
+26
+532
+Figure  12 . Implementation workflow of the TL - enhanced two - stage framework 533
+6.  Conclusions 534
+This  research  developed a segment - aware transfer learning framework for reliable early - stage building retrofit 535
+cost estimation under skewed cost distributions. Using a real - world dataset with a highly right - skewed cost 536
+distribution, projects were first classified into low -  and high - cost groups using SVM, followed by segmentspecific 537
+ANN regressors. Transfer learning was applied to transfer knowledge from the data - rich segment to the data - 538
+scarce segment.  Using a real - world dataset with a highly right - skewed cost distribution, projects were first 539
+classified into low -  and high - cost groups using SVM, followed by segment - specific ANN regressors. TL was 540
+applied to transfer knowledge from the data - rich segment to the data - scarce segment. The proposed framework, 541
+including different cost cutoffs and TL strategies, was systematically compared with conventional single - stage 542
+models such as CatBoost, XGBoost, Monotonic GBM, and ANN. Based on the experimental results, the following 543
+conclusions can be drawn : 544
+•  A ll TL – enhanced  two - stage  models  consistently  outperform  the  single - stage  models,  achieving 545
+reductions of 46% in MAPE and 25% in RMSE on the overall test set. 546
+•  Although two - stage models without TL are specialized for each cost segment, their overall performance 547
+is inferior to that of the single ANN model due to the limited number of training samples available for 548
+each regressor. 549
+•  Cost cutoff selection should prioritize class balance to ensure reliable SVM classification performance, 550
+rather than maximizing data availability for the pre - trained model. Under data - scarce conditions, as in 551
+this  research , the mean - based cutoff represents the safest and most robust choice. 552
+
+===== PAGE 27 =====
+27
+•  The balanced TL strategy is the most effective, yielding the most pronounced improvement in RMSE for 553
+high - cost projects. In contrast, the aggressive TL strategy is potentially risky, particularly when combined 554
+with cutoffs that induce severe class imbalance. 555
+•  SHAP analysis reveals that insulation -  and energy - related variables dominate the model’s predictive 556
+behavior, whereas variables related to construction year, floor area, or the number of stories play a 557
+comparatively minor role. 558
+In the context of limited data availability and highly heterogeneous cost distributions in construction projects, the 559
+proposed framework provides a data - driven decision - support tool for early - stage retrofitting cost analysis. By 560
+retaining extremely high - cost projects during model training rather than excluding them, the framework preserves 561
+critical project information and improves the reliability of automated cost estimation, thereby reducing the risk of 562
+cost underestimation and subsequent budget overruns compared with conventional prediction approaches. 563
+Despite these contributions, the framework has only been validated on nursery and healthcare retrofitting projects. 564
+Expanding the dataset to additional building types would improve the robustness and generalizability of the 565
+proposed system. Furthermore, since the current dataset mainly contains numerical and categorical variables, 566
+future research may incorporate unstructured textual project information using natural language processing and 567
+large language models to further enhance automated construction cost analytics and decision - support capabilities. 568
+Acknowledgements 569
+This work was supported by the National Research Foundation of Korea (NRF) grant funded by the Korea 570
+government (MSIT)  (RS - 2024 - 00344868). 571
+References 572
+[1]  C. Aparicio - Fernández, M. E. Torner, M. Cañada - Soriano, and J. - L. Vivancos, "Analysis of the energy 573
+performance strategies in a historical building used as a music school,"  Developments in the Built 574
+Environment,  vol. 15, 2023, doi: 10.1016/j.dibe.2023.100195. 575
+[2]  S. Park, S. Park, H. Jang, Y. Ahn, and N. Kwon, "Computing green remodeling construction cost for public 576
+buildings based on genetic algorithm and case - based reasoning,"  Developments in the Built Environment, 577
+vol. 22, p. 100655, 2025. 578
+[3]  L. Pérez - Lombard, J. Ortiz, and C. Pout, "A review on buildings energy consumption information,"  Energy 579
+and Buildings,  vol. 40, no. 3, pp. 394 - 398, 2008, doi: 10.1016/j.enbuild.2007.03.007. 580
+
+===== PAGE 28 =====
+28
+[4]  C. Fan, F. Xiao, Z. Li, and J. Wang, "Unsupervised data analytics in mining big building operational data for 581
+energy efficiency enhancement: A review,"  Energy and Buildings,  vol. 159, pp. 296 - 308, 2018, doi: 582
+10.1016/j.enbuild.2017.11.008. 583
+[5]  M. Aksoezen, M. Daniel, U. Hassler, and N. Kohler, "Building age as an indicator for energy consumption," 584
+Energy and Buildings,  vol. 87, pp. 74 - 86, 2015, doi: 10.1016/j.enbuild.2014.10.074. 585
+[6]  Z. Ma, P. Cooper, D. Daly, and L. Ledo, "Existing building retrofits: Methodology and state - of - the - art," 586
+Energy and buildings,  vol. 55, pp. 889 - 902, 2012. 587
+[7]  P. Xu, E. H. W. Chan, H. J. Visscher, X. Zhang, and Z. Wu, "Sustainable building energy efficiency retrofit 588
+for hotel buildings using EPC mechanism in China: analytic Network Process (ANP) approach,"  Journal of 589
+Cleaner Production,  vol. 107, pp. 378 - 388, 2015, doi: 10.1016/j.jclepro.2014.12.101. 590
+[8]  Y. Fan and X. Xia, "Energy - efficiency building retrofit planning for green building compliance,"  Building 591
+and Environment,  vol. 136, pp. 312 - 321, 2018, doi: 10.1016/j.buildenv.2018.03.044. 592
+[9]  N. Kwon, Y. Ahn, B. - S. Son, and H. Moon, "Developing a machine learning - based building repair time 593
+estimation model considering weight assigning methods,"  Journal of Building Engineering,  vol. 43, 2021, 594
+doi: 10.1016/j.jobe.2021.102627. 595
+[10]  D. W. M. Chan, "Sustainable building maintenance for safer and healthier cities: Effective strategies for 596
+implementing the Mandatory Building Inspection Scheme (MBIS) in Hong Kong,"  Journal of Building 597
+Engineering,  vol. 24, 2019, doi: 10.1016/j.jobe.2019.100737. 598
+[11]  D. E. Ighravwe and S. A. Oke, "A multi - criteria decision - making framework for selecting a suitable 599
+maintenance strategy for public buildings using sustainability criteria,"  Journal of Building Engineering,  vol. 600
+24, 2019, doi: 10.1016/j.jobe.2019.100753. 601
+[12]  N. Kwon, K. Song, Y. Ahn, M. Park, and Y. Jang, "Maintenance cost prediction for aging residential buildings 602
+based on case - based reasoning and genetic algorithm,"  Journal of Building Engineering,  vol. 28, p. 101006, 603
+2020. 604
+[13]  D. Monfet, M. Corsi, D. Choinière, and E. Arkhipova, "Development of an energy prediction tool for 605
+commercial buildings using case - based reasoning,"  Energy and Buildings,  vol. 81, pp. 152 - 160, 2014. 606
+[14]  R. Ruparathna, K. Hewage, and R. Sadiq, "Economic evaluation of building energy retrofits: A fuzzy based 607
+approach,"  Energy and Buildings,  vol. 139, pp. 395 - 406, 2017. 608
+
+===== PAGE 29 =====
+29
+[15]  M. A. Yamusa, H. S. i. Lawal, R. S. Abdulrahman, A. S. Salisu, A. Saka, M. Abubakar, and M. Abdullahi, 609
+"A machine - learning model for estimating construction renovation costs,"  International Journal of Building 610
+Pathology and Adaptation,  2025. 611
+[16]  J. Kim and H. Cha, "Expediting the Cost Estimation Process for Aged - Housing Renovation Projects Using 612
+a Probabilistic Deep Learning Approach, Sustainability, 2022," ed: DOI. 613
+[17]  S. Mulero - Palencia, S. Álvarez - Díaz, and M. Andrés - Chicote, "Machine learning for the improvement of 614
+deep renovation building projects using as - built BIM models,"  Sustainability,  vol. 13, no. 12, p. 6576, 2021. 615
+[18]  V. E. Papadimitriou and G. N. Aretoulis, "A final cost estimating model for building renovation projects," 616
+Buildings,  vol. 14, no. 4, p. 1072, 2024. 617
+[19]  B. J. Gardner, D. D. Gransberg, and J. A. Rueda, "Stochastic conceptual cost estimating of highway projects 618
+to communicate uncertainty using bootstrap sampling,"  ASCE - ASME Journal of Risk and Uncertainty in 619
+Engineering Systems, Part A: Civil Engineering,  vol. 3, no. 3, p. 05016002, 2017. 620
+[20]  M. Juszczyk, T. Hanák, M. Výskala, H. Pacyno, and M. Siejda, "Early fast cost estimates of sewerage 621
+projects construction costs based on ensembles of neural networks,"  Applied Sciences,  vol. 13, no. 23, p. 622
+12744, 2023. 623
+[21]  S. Mahmoud, M. F. Khamidi, A. Idrus, and O. A. - L. Ashola, "Development of maintenance cost prediction 624
+model for heritage buildings,"  Jurnal Teknologi (Sciences & Engineering),  vol. 74, no. 2, 2015. 625
+[22]  C. - S. Li and S. - J. Guo, "Development of a cost predicting model for maintenance of university buildings," 626
+in  Proceedings of the 2011 2nd International Congress on Computer Applications and Computational 627
+Science: Volume 1 , 2012: Springer, pp. 215 - 221. 628
+[23]  A. G. Mohamed, J. E. Ghaly, and M. Marzouk, "Revolutionizing semantic integration of maintenance cost 629
+prediction for building systems using artificial neural networks,"  Journal of Building Engineering,  vol. 96, 630
+p. 110416, 2024. 631
+[24]  J. - M. Kim, S. - G. Yum, M. D. Adhikari, and J. Bae, "A LSTM algorithm - driven deep learning approach to 632
+estimating  repair  and  maintenance  costs  of  apartment  buildings,"  Engineering,  Construction  and 633
+Architectural Management,  vol. 31, no. 13, pp. 369 - 389, 2024. 634
+[25]  Z. Wu, M. Liu, G. Ma, and S. Jiang, "A hybrid forecasting model to improve cost prediction accuracy in 635
+green building projects with machine learning,"  Engineering, Construction and Architectural Management, 636
+2025. 637
+
+===== PAGE 30 =====
+30
+[26]  Z. Wu,  M.  Liu, and G.  Ma,  "A machine  learning - based  two - stage  integrated  framework for  cost 638
+reasonableness prediction of green building projects,"  Journal of Building Engineering,  vol. 100, p. 111733, 639
+2025. 640
+[27]  K. S. Al - Gahtani, A. M. Alsugair, N. M. Alsanabani, A. A. Alabduljabbar, and A. S. Almohsen, "ANN 641
+prediction model of final construction cost at an early stage,"  Journal of Asian Architecture and Building 642
+Engineering,  vol. 24, no. 2, pp. 775 - 799, 2025. 643
+[28]  H. A. T. Nguyen, D. H. Pham, Y. Ahn, B. L. Oo, and B. T. H. Lim, "Machine learning and sustainable 644
+geopolymer materials: A systematic review,"  Materials Today Sustainability,  p. 101095, 2025. 645
+[29]  D. R. Das Adhikary, R. Sahu, and S. Pragyna Panda, "Prediction of used car prices using machine learning," 646
+in  Biologically Inspired Techniques in Many Criteria Decision Making: Proceedings of BITMDM 2021 : 647
+Springer, 2022, pp. 131 - 140. 648
+[30]  H. A. T. Nguyen, D. H. Pham, A. T. Le, Y. Ahn, B. L. Oo, and B. T. H. Lim, "Transfer learning framework 649
+for modelling the compressive strength of ultra - high performance geopolymer concrete,"  Construction and 650
+Building Materials,  vol. 459, p. 139746, 2025. 651
+[31]  C. Hennebold, K. Klöpfer, P. Lettenbauer, and M. Huber, "Machine learning based cost prediction for product 652
+development in mechanical engineering,"  Procedia CIRP,  vol. 107, pp. 264 - 269, 2022. 653
+[32]  V. E. Papadimitriou and G. N. Aretoulis, "An Innovative Approach Regarding Efficient and Expedited Early 654
+Building Renovation Cost Estimation Utilizing ANNs and the TOPSIS Methodology,"  Algorithms,  vol. 18, 655
+no. 11, p. 696, 2025. 656
+[33]  C. Deb, Z. Dai, and A. Schlueter, "A machine learning - based framework for cost - optimal building retrofit," 657
+Applied energy,  vol. 294, p. 116990, 2021. 658
+[34]  H. Nasrazadani, M. Mahsuli, H. Talebiyan, and H. Kashani, "Probabilistic modeling framework for 659
+prediction of seismic retrofit cost of buildings,"  Journal of Construction Engineering and Management,  vol. 660
+143, no. 8, p. 04017055, 2017. 661
+[35]  Y. Gao, Y. Ruan, C. Fang, and S. Yin, "Deep learning and transfer learning models of energy consumption 662
+forecasting for a building with poor information data,"  Energy and Buildings,  vol. 223, p. 110156, 2020. 663
+[36]  E. Ford, K. Maneparambil, A. Kumar, G. Sant, and N. Neithalath, "Transfer (machine) learning approaches 664
+coupled with target data augmentation to predict the mechanical properties of concrete,"  Machine Learning 665
+with Applications,  vol. 8, p. 100271, 2022. 666
+
+===== PAGE 31 =====
+31
+[37]  H. Pak and S. G. Paal, "Evaluation of transfer learning models for predicting the lateral strength of reinforced 667
+concrete columns,"  Engineering Structures,  vol. 266, p. 114579, 2022. 668
+[38]  H. Ji, Y. Tian, C. Fu, and H. Ye, "Transfer learning enables prediction of steel corrosion in concrete under 669
+natural environments,"  Cement and Concrete Composites,  vol. 148, p. 105488, 2024. 670
+[39]  Q. Yang, W. Shi, J. Chen, and W. Lin, "Deep convolution neural network - based transfer learning method for 671
+civil infrastructure crack detection,"  Automation in Construction,  vol. 116, p. 103199, 2020. 672
+[40]  Y. Guo, H. Niu, and S. Li, "Safety monitoring in construction site based on unmanned aerial vehicle platform 673
+with computer vision using transfer learning techniques," in  Asia - Pacific Workshop on Structural Health 674
+Monitoring , 2018, vol. 7. 675
+[41]  H. Luo, J. Chen, P. E. Love, and W. Fang, "Explainable transfer learning for modeling and assessing risks in 676
+tunnel construction,"  IEEE Transactions on Engineering Management,  vol. 71, pp. 8339 - 8355, 2024. 677
+[42]  H. A. T. Nguyen, D. H. Pham, B. Kim, Y. Ahn, and N. Kwon, "Developing an automated framework for eco - 678
+label information categorization using web crawling and Natural Language Processing techniques,"  Expert 679
+Systems with Applications,  p. 127688, 2025. 680
+[43]  L. Prokhorenkova, G. Gusev, A. Vorobev, A. V. Dorogush, and A. Gulin, "CatBoost: unbiased boosting with 681
+categorical features,"  Advances in neural information processing systems,  vol. 31, 2018. 682
+[44]  C. Bentéjac, A. Csörgő, and G. Martínez - Muñoz, "A comparative analysis of gradient boosting algorithms," 683
+Artificial Intelligence Review,  vol. 54, pp. 1937 - 1967, 2021. 684
+[45]  S. - B. Lee, Y. - J. Kim, S. Hwang, H. Son, S. K. Lee, K. - I. Park, and Y. - G. Kim, "Predicting Parkinson's disease 685
+using gradient boosting decision tree models with electroencephalography signals,"  Parkinsonism & Related 686
+Disorders,  vol. 95, pp. 77 - 85, 2022. 687
+[46]  S. Demir and E. K. Sahin, "Predicting occurrence of liquefaction - induced lateral spreading using gradient 688
+boosting algorithms integrated with particle swarm optimization: PSO - XGBoost, PSO - LightGBM, and 689
+PSO - CatBoost,"  Acta Geotechnica,  vol. 18, no. 6, pp. 3403 - 3419, 2023. 690
+[47]  T. Chen and C. Guestrin, "Xgboost: A scalable tree boosting system," in  Proceedings of the 22nd acm sigkdd 691
+international conference on knowledge discovery and data mining , 2016, pp. 785 - 794. 692
+[48]  A. E. Roth, "Introduction to the Shapley value,"  The Shapley value,  vol. 1, 1988. 693
+694

@@ -1,0 +1,105 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.7in]{geometry}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\sloppy
+\newcommand{\loc}[1]{\textbf{Location:} #1}
+\newcommand{\current}[1]{\textbf{Current context:} #1}
+\newcommand{\replacewith}[1]{\textbf{Replace with / Add:}\\{\color{blue}#1}}
+\newcommand{\why}[1]{\textbf{Why this edit:} #1}
+\begin{document}
+\begin{center}
+{\Large Mandatory Revision Guide (Second-Pass Review)}\\
+{\small Manuscript dated 16 July 2026. Blue text indicates suggested replacement or addition.}
+\end{center}
+
+\section*{Status of the Previous 10 Edits}
+Edits 1--8 were incorporated in substance. Edit 9 was not incorporated: the phrase ``general AI-driven modeling paradigm'' remains on page 25. Edit 10 was inserted but the original conclusion opening was retained immediately afterward, creating duplication. Edit 7 also requires verification against the actual code because its present wording makes a strong no-leakage claim.
+
+\section*{Edit 1. Remove the duplicated literature paragraph}
+\loc{Page 4, lines 91--100}
+\current{Two consecutive paragraphs both begin by discussing MLR, GA, and CBR and repeat the same Kwon et al. [12] example.}
+\replacewith{Delete the first paragraph (lines 91--95) and retain the second paragraph beginning ``Methods such as MLR, GA, and CBR...''}
+\why{This is an obvious duplication and interrupts the literature-review logic.}
+
+\section*{Edit 2. Correct and verify the leakage-control statement}
+\loc{Pages 10--11, lines 193--215; Table 3}
+\current{The manuscript states that preprocessing and model selection used training data only and that cost cutoffs were evaluated without test-set leakage. However, Table 3 reports one fixed set of cutoff values and sample counts for all 419 projects.}
+\replacewith{For each random split, the scaler, encoding parameters, and hyperparameters were fitted using the training partition only. The test partition was not used for model selection. The cost threshold for each rule (mean, Q3, or Q3 + IQR/2) was computed from the training partition and then applied unchanged to the corresponding test partition. Table 3 reports full-dataset descriptive thresholds only; split-specific thresholds were used for model fitting and evaluation.}
+\why{Use this text only if it matches the code. If the fixed full-dataset thresholds in Table 3 were used before splitting, rerun the analysis with training-only thresholds. A wording change alone cannot cure leakage.}
+
+\section*{Edit 3. Clarify whether component-cost predictors compromise early-stage use}
+\loc{Pages 8--9, Table 2; Implications and Limitations}
+\current{Window, door, HVAC, and boiler installation costs are predictors of direct construction cost, while the paper claims early-stage estimation.}
+\replacewith{Several predictors represent estimated component-level costs (N10, N11, N14, and N15). These values were available at the intended decision point and were not calculated from the final direct construction cost. To assess whether performance is driven by these cost-denominated inputs, an additional ablation model excluding N10, N11, N14, and N15 was evaluated and is reported in [Table/Figure X].}
+\why{Without provenance, timing, and an ablation check, reviewers may regard these variables as target leakage or question the claimed early-stage applicability. This requires analysis, not only prose.}
+
+\section*{Edit 4. Remove duplicated TL rationale}
+\loc{Page 14, lines 294--302}
+\current{Two consecutive sentences begin ``To address these issues...'' and ``To overcome these issues...'' and convey the same point.}
+\replacewith{To address these issues, TL was incorporated to reuse representations learned from the data-rich low-cost segment and improve adaptation and prediction robustness in the data-scarce high-cost segment.}
+\why{Removes repetition and states the transfer direction precisely.}
+
+\section*{Edit 5. Make the TL strategies reproducible}
+\loc{Page 15, lines 317--327}
+\current{The strategies are described only as ``most hidden layers,'' ``partial freezing,'' and ``all layers,'' with qualitative learning-rate labels.}
+\replacewith{Add a compact table reporting, for each conservative, balanced, and aggressive strategy: source architecture; copied layers; frozen layers; trainable layers; optimizer; exact learning rate; batch size; epochs; early-stopping rule; and validation procedure. State whether Batch Normalization parameters, if any, were frozen.}
+\why{The present descriptions are insufficient to reproduce the central experiment.}
+
+\section*{Edit 6. Correct the number of evaluation metrics}
+\loc{Page 15, lines 328--330}
+\current{``Model performance was evaluated using four metrics: R2, RMSE, and MAPE, along with visual comparisons...''}
+\replacewith{Model performance was evaluated using three quantitative metrics---R$^2$, RMSE, and MAPE---together with residual and predicted-versus-observed plots. Overall metrics were supplemented by RMSE calculated for projects with observed costs at or above Q3 and Q3 + IQR/2.}
+\why{Only three quantitative metrics are listed; plots are diagnostic visualizations, not a fourth metric.}
+
+\section*{Edit 7. Resolve the best-model contradiction}
+\loc{Abstract; page 18, lines 390--399; Table 4; Conclusions}
+\current{The text calls the mean-cutoff balanced strategy the highest-performing model, but Table 4 shows slightly better overall R$^2$, MAPE, and RMSE for the mean-cutoff conservative strategy. Balanced is better only for the two high-cost RMSE columns.}
+\replacewith{Among the mean-cutoff models, the conservative strategy achieved the best overall metrics (R$^2$ = 0.9568, MAPE = 10.79\%, RMSE = USD 21,360), whereas the balanced strategy achieved the lowest high-cost RMSE (USD 34,337 for cost $\geq$ Q3 and USD 39,797 for cost $\geq$ Q3 + IQR/2). Because the primary objective is reliable high-cost estimation, the balanced strategy was selected as the preferred trade-off rather than described as the best model on every metric.}
+\why{This aligns the narrative with Table 4 and preserves the paper's high-cost reliability objective. Update the abstract and conclusion to use the same selection rationale.}
+
+\section*{Edit 8. Report the statistical-test design completely}
+\loc{Pages 20 and 22, Tables 5--6}
+\current{Wilcoxon signed-rank p-values are reported without defining the paired observational unit, alternative hypothesis, zero handling, multiplicity correction, or effect size.}
+\replacewith{For each comparison, state the paired unit (the same random split/seed), the number of pairs, whether the test was two-sided, the method used for zero differences, and the multiple-comparison correction. Report an effect size and adjusted p-values. Do not pool non-independent cutoff-strategy observations as if they were independent replicates.}
+\why{P-values alone are not sufficient, and dependence among repeated evaluations can invalidate the inference. Recalculate the tables if the current tests do not follow this paired design.}
+
+\section*{Edit 9. Correct the interpretation of TL-strategy significance}
+\loc{Page 22, lines 453--461; Table 6}
+\current{The discussion implies broad superiority of balanced TL, although conservative versus balanced is not significant for overall R$^2$ (0.158) or overall RMSE (0.146).}
+\replacewith{The balanced strategy did not differ significantly from the conservative strategy in overall R$^2$ or RMSE, but it produced significantly lower RMSE in both predefined high-cost subsets. These results support balanced transfer when high-cost reliability is prioritized, while not establishing universal superiority across all metrics.}
+\why{The revised wording matches the reported p-values and avoids overstating the evidence.}
+
+\section*{Edit 10. Remove unsupported temporal robustness and generalizability claims}
+\loc{Page 25, lines 515--530}
+\current{The manuscript infers temporal robustness from low SHAP importance for year of completion and claims scalability to other building types and regions. The previous Edit 9 wording was not applied.}
+\replacewith{Correlation and SHAP analyses indicate that year of completion had limited influence within the present dataset; however, this finding does not by itself demonstrate temporal robustness. External validation across time periods, building types, and regions is required before transferability can be established. More broadly, this study presents a data-driven decision-support approach for construction analytics problems with highly dispersed target distributions, where removing high-cost observations may result in important information loss.}
+\why{Feature importance is not evidence of temporal validation, and the dataset contains only nursery schools and healthcare facilities.}
+
+\section*{Edit 11. Remove the duplicated conclusion opening}
+\loc{Page 26, lines 534--540}
+\current{The description of the dataset, segmentation, and transfer direction appears twice consecutively.}
+\replacewith{This study developed a segment-aware transfer learning framework for reliable early-stage building retrofit cost estimation under skewed cost distributions. Projects were first classified into low- and high-cost groups using an SVM, followed by segment-specific ANN regressors. Transfer learning then reused knowledge from the data-rich low-cost segment to initialize and adapt the data-scarce high-cost regressor.}
+\why{The previous replacement was added without deleting the old text.}
+
+\section*{Edit 12. Repair incomplete and inconsistent references}
+\loc{Pages 27--31, References}
+\current{Reference [16] contains placeholder-like wording (``Sustainability, 2022, ed: DOI''); several entries omit DOI/article numbers; capitalization and journal-title style are inconsistent. Reference [48] is a general Shapley-value source rather than the standard methodological source for SHAP.}
+\replacewith{Complete every entry with verified bibliographic metadata and apply one journal style consistently. Replace placeholder text in [16], verify all 2025 references, and cite the primary SHAP methodology source in Section 3.4 in addition to any game-theory background reference.}
+\why{Incomplete references are a submission-level defect and weaken reproducibility.}
+
+\section*{Minor but Necessary Language Cleanup}
+Apply a final proofread for duplicated spaces, split words, and grammar, including: ``the performance ... was evaluated'' (page 7); ``21 inputs and one output variable'' and ``cool-roof elements'' (page 8); ``developing'' (page 11); ``XGBoost supports classification, regression, ranking...'' (page 11); and consistent use of ``this study'' rather than alternating with ``this research.''
+
+\section*{Do Not Finalize Until These Checks Pass}
+\begin{itemize}[leftmargin=*]
+\item Confirm training-only preprocessing, threshold computation, and hyperparameter selection from code or rerun the experiments.
+\item Add the component-cost ablation or narrow the ``early-stage'' claim.
+\item Recalculate Tables 5--6 with a clearly paired design and multiplicity control.
+\item Make all abstract, results, implications, and conclusion claims agree with Table 4.
+\item Complete the reference list and run a final visual proofread of equations, symbols, tables, and bullets.
+\end{itemize}
+\end{document}
