@@ -1,0 +1,33 @@
+\documentclass[11pt]{letter}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{hyperref}
+\signature{Ho Anh Thu Nguyen\\Department of Smart City Engineering\\Hanyang University-ERICA\\Ansan 15588, Republic of Korea}
+\address{Department of Smart City Engineering\\Hanyang University ERICA Campus\\55 Hanyangdaehak-ro, Sangnok-gu\\Ansan, Gyeonggi-do 15588, Republic of Korea}
+\date{July 2026}
+
+\begin{document}
+\begin{letter}{Editor-in-Chief\\Journal of Construction Engineering and Management}
+
+\opening{Dear Editor,}
+
+We are pleased to submit our manuscript entitled ``A Segment-Aware Transfer Learning Framework for Reliable Early-Stage Cost Estimation of Building Retrofit Projects'' for consideration for publication in the \textit{Journal of Construction Engineering and Management}. This manuscript is authored by Nahyun Kwon, Sojin Park, Yonghan Ahn, and Ho Anh Thu Nguyen.
+
+Reliable early-stage cost estimation is a fundamental challenge in construction engineering and management, particularly for building retrofit projects where historical data are limited and project costs are highly heterogeneous. Existing machine learning-based cost prediction models may achieve acceptable overall accuracy but often struggle with high-cost projects because such cases are underrepresented in available datasets. Excluding extreme-cost projects during preprocessing can improve model stability, but it also introduces sampling bias and limits practical applicability for construction decision-making.
+
+To address these challenges, this study proposes a segment-aware transfer learning framework that integrates support vector machine-based cost range classification with segment-specific artificial neural network regressors. By transferring knowledge from data-rich low-cost segments to data-scarce high-cost segments, the proposed framework preserves information from extreme-cost projects while improving predictive reliability across the full cost spectrum. The framework is designed to support early-stage retrofit planning, where reliable cost information is critical for feasibility assessment, budgeting, and investment decisions.
+
+The proposed framework was evaluated using a real-world dataset comprising 419 building retrofit projects. Compared with the best-performing single-stage baseline, the proposed approach achieved an average \(R^2\) of 0.9566 and reduced MAPE and overall RMSE by 46\% and 25\%, respectively. For high-cost segments, RMSE decreased from USD 41,163 to USD 34,337 for projects with cost greater than or equal to Q3 and from USD 47,410 to USD 39,797 for projects with cost greater than or equal to Q3 + IQR/2. SHAP-based interpretation further identified key cost-driving factors, including insulation, window replacement, HVAC systems, and renewable energy measures, providing transparent insights for construction planning and cost management.
+
+We believe this work aligns closely with the aims and scope of the \textit{Journal of Construction Engineering and Management}. The manuscript contributes to construction estimating, cost control, construction management, and computer applications in construction engineering. Beyond its methodological contribution, the proposed framework offers a practical and interpretable decision-support tool for improving the reliability of early-stage retrofit cost estimation under limited, imbalanced, and highly skewed data conditions.
+
+This research also supports the United Nations Sustainable Development Goals, particularly Industry, Innovation and Infrastructure through the development of digital technologies for construction management, and Sustainable Cities and Communities by facilitating more reliable planning and management of building retrofit projects that contribute to the sustainability and resilience of the built environment.
+
+We confirm that this manuscript is original, has not been published previously, and is not under consideration for publication elsewhere. All authors have approved the submitted manuscript, and the authors declare that there are no conflicts of interest.
+
+Thank you for your time and consideration. We appreciate your evaluation of our manuscript and hope it will be considered suitable for publication in the \textit{Journal of Construction Engineering and Management}.
+
+\closing{Sincerely,}
+
+\end{letter}
+\end{document}
+

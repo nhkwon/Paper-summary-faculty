@@ -1,0 +1,33 @@
+\documentclass[11pt]{letter}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{hyperref}
+\signature{Ho Anh Thu Nguyen\\Department of Smart City Engineering\\Hanyang University-ERICA\\Ansan 15588, Republic of Korea}
+\address{Department of Smart City Engineering\\Hanyang University ERICA Campus\\55 Hanyangdaehak-ro, Sangnok-gu\\Ansan, Gyeonggi-do 15588, Republic of Korea}
+\date{July 2026}
+
+\begin{document}
+\begin{letter}{Editor-in-Chief\\Developments in the Built Environment}
+
+\opening{Dear Editor,}
+
+We are pleased to submit our manuscript entitled ``A Segment-Aware Transfer Learning Framework for Reliable Early-Stage Cost Estimation of Building Retrofit Projects'' for consideration for publication in \textit{Developments in the Built Environment}. This manuscript is authored by Nahyun Kwon, Sojin Park, Yonghan Ahn, and Ho Anh Thu Nguyen.
+
+This manuscript was previously submitted to \textit{Developments in the Built Environment} and was declined without full peer review because suitable reviewers could not be secured. We have revised the title, abstract, and framing of the manuscript to more clearly emphasize its contribution to building retrofit decision support, early-stage cost-risk assessment, and reliable cost estimation under skewed and data-scarce conditions. We also provide additional reviewer suggestions to facilitate the review process.
+
+Reliable early-stage cost estimation is essential for building retrofit planning, yet prediction remains challenging because retrofit costs are often highly skewed and high-cost projects are underrepresented in available datasets. Conventional single-stage machine learning models may achieve acceptable overall accuracy but frequently underestimate extreme-cost projects, increasing the risk of budget shortfalls and unreliable investment decisions. This challenge is directly relevant to built environment planning, retrofit feasibility assessment, and sustainable building renewal.
+
+To address this issue, this study proposes a segment-aware transfer learning framework for building retrofit cost estimation. The framework first classifies projects into low- and high-cost segments using a support vector machine classifier and then applies segment-specific artificial neural network regressors enhanced through transfer learning from data-rich to data-scarce cost segments. This design improves predictive reliability while preserving information from high-cost projects that are often excluded as outliers in conventional modeling workflows.
+
+The framework was evaluated using a real-world dataset of 419 retrofit projects involving nursery schools and healthcare facilities, with direct construction costs ranging from approximately USD 5,000 to USD 800,000. Results show that the proposed framework achieved an average \(R^2\) of 0.9566 and reduced MAPE and RMSE by 46\% and 25\%, respectively, compared with the best-performing single-stage baseline. For high-cost segments, RMSE decreased from USD 41,163 to USD 34,337 for projects with cost greater than or equal to Q3 and from USD 47,410 to USD 39,797 for projects with cost greater than or equal to Q3 + IQR/2. SHAP analysis further identified insulation, window replacement, HVAC systems, and renewable energy measures as key cost-driving factors.
+
+We believe this manuscript aligns closely with the aims and scope of \textit{Developments in the Built Environment}. It contributes to sustainable building retrofit planning, built environment decision support, maintenance and repair assessment, and data-driven methods for improving the reliability of early-stage cost estimation. The proposed framework provides an interpretable and practical approach for supporting retrofit investment decisions under limited, imbalanced, and highly skewed data conditions.
+
+We confirm that this manuscript is original, has not been published previously, and is not under consideration for publication elsewhere. All authors have approved the submitted manuscript, and the authors declare that there are no conflicts of interest.
+
+Thank you for your time and consideration. We appreciate your evaluation of our manuscript and hope it will be considered suitable for publication in \textit{Developments in the Built Environment}.
+
+\closing{Sincerely,}
+
+\end{letter}
+\end{document}
+
