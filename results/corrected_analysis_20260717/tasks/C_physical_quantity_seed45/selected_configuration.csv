@@ -1,0 +1,2 @@
+seed,split_id,feature_set,train_index_hash,test_index_hash,cutoff_rule,transfer_strategy,primary_selection_endpoint,tie_breakers,selection_scope
+45,seed_45,C_physical_quantity,8c248bccf6046cb28dc3e4cc090c1fc5112a90eeed204b1e716582c31ddb979d,e4301a9888bf200397af19614edf982f23e0cbd8f7352817d893e63912eb0be0,Mean,Balanced,rmse_q3,"rmse,mape_pct,lexical",outer training only

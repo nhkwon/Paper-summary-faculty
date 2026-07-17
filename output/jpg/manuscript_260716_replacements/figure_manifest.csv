@@ -1,0 +1,10 @@
+file,manuscript_action,recommended_caption
+figure1_leakage_controlled_workflow.jpg,Replace Figure 1,Leakage-controlled nested evaluation and component-cost ablation.
+figure5_corrected_model_performance.jpg,Replace Figure 5,Leakage-controlled outer-test performance across 10 seeds.
+figure6_corrected_residuals_seed42.jpg,Optional replacement for Figure 6,Residuals on the prespecified seed-42 outer test; descriptive only.
+figure7_corrected_predictions_seed42.jpg,Optional replacement for Figure 7,Observed and predicted costs on the prespecified seed-42 outer test; descriptive only.
+figure8_training_derived_svm_performance.jpg,Replace Figure 8,SVM classification under training-derived cutoffs.
+figure9_split_specific_class_counts.jpg,Replace Figure 9,Split-specific class counts under training-derived cutoffs.
+figure12_evidence_gated_implementation_workflow.jpg,Replace Figure 12,Evidence-gated implementation workflow.
+figure_new_component_cost_ablation.jpg,Use as new Figure 11 after corrected Table 4,Component-cost ablation for the training-selected procedure.
+figure_new_training_selection_frequency.jpg,Use as new Figure 10 near configuration selection results,Training-only cutoff and transfer-strategy selections.

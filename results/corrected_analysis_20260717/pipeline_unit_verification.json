@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "data_shape": [
+    419,
+    22
+  ],
+  "full_dataset_descriptive_thresholds": {
+    "Mean": 148271.1898654991,
+    "Q3": 180676.1142,
+    "Q3+IQR/2": 228626.21862
+  },
+  "seed_42_train_hash": "ec2c5a575a0b1ee4de75df97ea8ba831680db19b0e9a19408adfd21c224436b7",
+  "seed_42_test_hash": "b8d3dc52f3d64eaa2c6def794ef4b4b617249cc20aef64b0716876562347b736",
+  "transformed_shapes": {
+    "A_all_21": [
+      293,
+      21
+    ],
+    "B_no_component_costs": [
+      293,
+      17
+    ],
+    "C_physical_quantity": [
+      293,
+      16
+    ]
+  },
+  "monotone_constraint_counts": {
+    "A_all_21": 6,
+    "B_no_component_costs": 5,
+    "C_physical_quantity": 5
+  },
+  "perfect_prediction_segment_counts": {
+    "q3": 24,
+    "q3_iqr2": 14
+  }
+}

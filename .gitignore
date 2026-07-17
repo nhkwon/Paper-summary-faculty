@@ -1,0 +1,17 @@
+# Local dependency trees and task runtimes
+node_modules/
+tmp/
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Transient logs and editor/OS files
+*.log
+*.tmp
+.DS_Store
+Thumbs.db

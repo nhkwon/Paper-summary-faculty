@@ -1,0 +1,390 @@
+\documentclass[10pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[margin=0.67in]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{amssymb}
+\usepackage{pdflscape}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+
+\graphicspath{{output/jpg/manuscript_260716_replacements/}}
+\definecolor{revisionblue}{RGB}{0,70,190}
+\definecolor{deleteRed}{RGB}{165,28,48}
+\definecolor{keepGreen}{RGB}{0,115,78}
+\definecolor{lightblue}{RGB}{231,240,252}
+\definecolor{lightred}{RGB}{252,235,237}
+\definecolor{lightgray}{RGB}{244,246,248}
+
+\hypersetup{colorlinks=true,linkcolor=revisionblue,urlcolor=revisionblue}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
+\sloppy
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Corrected-analysis revision guide}
+\rhead{Manuscript\_260716-01}
+\cfoot{\thepage}
+
+\newcommand{\loc}[1]{\textbf{Manuscript location:} #1}
+\newcommand{\verified}[1]{\textbf{Verified result:} #1}
+\newcommand{\replacewith}[1]{\textbf{Replacement text / required action:}\\{\color{revisionblue}#1}}
+\newcommand{\deleteitem}[1]{\textbf{Delete or withdraw:} {\color{deleteRed}#1}}
+\newcommand{\keepitem}[1]{\textbf{May be retained:} {\color{keepGreen}#1}}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries Verified Corrected-Analysis Revision Guide}\\[4pt]
+{\large for ``A Segment-Aware Transfer Learning Framework for Reliable Early-Stage Cost Estimation of Building Retrofit Projects''}\\[6pt]
+{\small Based on the supplied manuscript PDF, notebook, and \texttt{Data\_ML2.xlsx}. Blue text is replacement language. Red text identifies unsupported material that must be deleted or regenerated.}
+\end{center}
+
+\vspace{3pt}
+\colorbox{lightblue}{\parbox{0.96\linewidth}{
+\textbf{Analysis status.} All 30 planned tasks (3 feature sets $\times$ 10 seeds) completed successfully. The verification manifest confirms 510 metric rows, identical outer partitions across feature sets, 293 training and 126 test observations per seed, complete predictions and tuning records, and one common data SHA-256.
+}}
+
+\colorbox{lightred}{\parbox{0.96\linewidth}{
+\textbf{Submission conclusion.} The current manuscript must not be submitted with the existing performance and superiority claims. Under leakage-controlled evaluation, the training-selected two-stage transfer-learning procedure performed worse than the single ANN on $R^2$ and all RMSE endpoints. The original $R^2=0.9566$ and 46\%/25\% improvement claims were not reproduced.
+}}
+
+\tableofcontents
+\newpage
+
+\section{What changes are mandatory}
+
+\begin{tabularx}{\linewidth}{>{\bfseries}p{0.10\linewidth}p{0.26\linewidth}X}
+\toprule
+Page(s) & Current content & Mandatory action \\
+\midrule
+1 & Title and Abstract & Replace the performance claims and condition or remove ``early-stage.'' Use the corrected abstract in Section~\ref{sec:titleabstract}. \\
+7 & Figure 1 and lines 153--165 & Replace the workflow. The current order places cutoff analysis and scaling before the outer split. \\
+8--9 & Table 2 and Figure 2 & Keep descriptive statistics, but flag N10, N11, N14, and N15 as component-cost inputs and document their timing and provenance. Treat correlations as descriptive only. \\
+10 & Table 3 & Replace full-dataset thresholds and counts with split-specific training-derived evidence. \\
+11--15 & Methods & Replace the leakage-control, tuning, ANN, early-stopping, selection, ablation, and statistical-analysis descriptions. \\
+16--20 & Table 4; Figures 5--7; lines 353--420 & Replace all performance values and the superiority narrative. Figures 6--7 may be retained only as seed-42 descriptive plots with corrected predictions. \\
+20--22 & Tables 5--6; Figures 8--9 & Withdraw pooled Wilcoxon tables. Insert seed-blocked repeated-measures results. Replace SVM and class-count figures. \\
+22--24 & Original Figures 10--11 and SHAP narrative & Delete unless SHAP is rerun for a prespecified corrected model. The current model was chosen after inspecting outer-test results. The two corrected evidence plots in this guide may take the vacated Figure 10--11 numbers. \\
+25--27 & Implications, Figure 12, Conclusions & Replace claims of reliable superiority, balanced-transfer superiority, and unqualified early-stage use. \\
+27 & Before References & Add code/data availability only after a permanent archive and identifier exist. \\
+\bottomrule
+\end{tabularx}
+
+\section{Corrected result that governs every edit}
+
+For the full 21-input feature set, the prespecified primary comparison is the training-only selected two-stage transfer-learning procedure versus the single ANN. Values below are mean $\pm$ standard deviation across the 10 outer seeds.
+
+\begin{center}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+Model & $R^2$ & MAPE (\%) & RMSE & RMSE $\geq$ train Q3 & RMSE $\geq$ train Q3+IQR/2 \\
+\midrule
+Single ANN & $0.9511\pm0.0142$ & $12.41\pm1.90$ & $22{,}535\pm2{,}793$ & $36{,}683\pm6{,}181$ & $44{,}128\pm6{,}871$ \\
+Training-selected two-stage TL & $0.9201\pm0.0370$ & $14.81\pm4.13$ & $28{,}235\pm6{,}186$ & $46{,}984\pm13{,}033$ & $55{,}808\pm14{,}668$ \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+Paired two-stage-minus-ANN differences were: $R^2=-0.0310$ (Holm $p=0.0078$), RMSE $=+\$5{,}700$ (95\% bootstrap CI $\$3{,}179$ to $\$8{,}429$; Holm $p=0.0078$), Q3 RMSE $=+\$10{,}301$ (Holm $p=0.0117$), and Q3+IQR/2 RMSE $=+\$11{,}680$ (Holm $p=0.0156$). The MAPE difference was not significant after Holm adjustment ($p=0.1465$).
+
+\deleteitem{All statements that the proposed transfer-learning framework consistently outperformed the baseline models, including the 46\% MAPE reduction, 25\% RMSE reduction, and $R^2=0.9566$ claim.}
+
+\replacewith{Under leakage-controlled outer evaluation, the single ANN was the descriptive performance leader. The training-selected two-stage transfer-learning procedure did not improve predictive accuracy over the ANN and produced significantly larger overall and high-cost RMSE values.}
+
+\clearpage
+\section{Title and Abstract replacement}
+\label{sec:titleabstract}
+
+\loc{Page 1, title and lines 7--24.}
+
+\replacewith{\textbf{Recommended title:} ``Leakage-Controlled Evaluation of Segment-Aware Transfer Learning for Building Retrofit Cost Estimation.''}
+
+If the authors can document that N10, N11, N14, and N15 are preliminary estimates available at the stated decision point, ``early-stage'' may be reconsidered. Otherwise, do not use it in the title.
+
+\replacewith{\textbf{Replacement Abstract:} Reliable building-retrofit cost estimation is difficult when project costs are highly skewed and high-cost cases are sparse. This study evaluated a segment-aware framework that combines support-vector-machine classification, segment-specific neural-network regression, and transfer learning. A dataset of 419 retrofit projects was assessed using 10 prespecified outer splits (seeds 42--51), with 293 training and 126 test observations per split. All target-derived cutoffs, preprocessing, hyperparameter tuning, early stopping, and cutoff-by-transfer-strategy selection were confined to the outer training data. The primary two-stage procedure achieved $R^2=0.9201\pm0.0370$, MAPE $=14.81\pm4.13\%$, and RMSE $=\$28{,}235\pm\$6{,}186$, whereas the single ANN achieved $R^2=0.9511\pm0.0142$, MAPE $=12.41\pm1.90\%$, and RMSE $=\$22{,}535\pm\$2{,}793$. The two-stage procedure therefore had 25.3\% higher mean RMSE, and paired seed-level tests favored the ANN for $R^2$ and all RMSE endpoints after Holm adjustment. Removing four component-cost inputs increased the two-stage RMSE to $\$51{,}186$, while the physical/quantity feature set yielded RMSE $=\$52{,}854$. These findings do not support predictive superiority of the transfer-learning procedure and show that performance depends strongly on component-cost inputs. The timing and provenance of those inputs must be established before the framework is described as an early-stage decision-support method.}
+
+\section{Figure 1 and analysis workflow}
+
+\loc{Page 7, Figure 1 and lines 153--165.}
+
+\deleteitem{The current ordering of statistical analysis, cutoff analysis, scaling, and the 70:30 split. Also delete the statement that the ``best-performing model'' was subsequently selected from outer-test comparisons.}
+
+\replacewith{For each prespecified seed, the raw data were split first into an outer training partition (70\%, $n=293$) and an untouched outer test partition (30\%, $n=126$). Target-derived cutoffs were computed from outer-training outcomes only. Encoding and scaling were fitted within the inner cross-validation folds. Model and SVM hyperparameters, and the cutoff-by-transfer-strategy configuration, were selected without access to the outer test partition. The selected pipeline was refitted on all outer-training observations and evaluated once on the corresponding outer test partition.}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figure1_leakage_controlled_workflow.jpg}
+\caption{Recommended replacement for Figure 1. Leakage-controlled nested evaluation and component-cost ablation.}
+\end{figure}
+
+\section{Table 2 and the early-stage evidence gate}
+
+\loc{Pages 8--9, Table 2 and lines 175--182.}
+
+\keepitem{The descriptive summary values and correlation heatmap, provided they are explicitly labelled descriptive and not evidence of out-of-sample validity.}
+
+\replacewith{Add a ``Decision-point availability'' or ``Provenance'' column to Table 2. For N10, N11, N14, and N15, state whether each value is a preliminary estimate available before detailed costing or a realized cost incorporated into the final direct-construction-cost total. Add this footnote: ``The four monetary component-cost variables sum to an average of USD 44,851.88, equal to 30.25\% of the mean target. Their timing and provenance determine whether the analysis represents early-stage prediction or conditional total-cost reconstruction.''}
+
+\replacewith{Replace the correlation interpretation with: ``N10 was strongly correlated with the target ($r\approx0.806$), and the four component-cost predictors jointly represented a substantial share of the mean target. These descriptive associations motivated a prespecified feature-set ablation; they should not be interpreted as evidence of causal importance or early availability.''}
+
+\section{Corrected Table 3}
+
+\loc{Page 10, Table 3 and lines 194--205.}
+
+The existing values (148,271; 180,676; 228,626 and the associated 419-project class counts) are full-dataset descriptive values. They were not used for corrected model fitting.
+
+\replacewith{Retitle the old values ``Full-dataset descriptive thresholds; not used for model fitting'' if retained in a supplement. Replace the fitted-model table with the split-specific summary below.}
+
+\begin{center}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+Cutoff & Training-derived value & Train low/high & Test low/high & Test $n\geq$ train Q3 & Test $n\geq$ train Q3+IQR/2 \\
+\midrule
+Mean & $147{,}584\pm3{,}777$ [140,511--154,019] & $168.6\pm4.7$ / $124.4\pm4.7$ & $71.9\pm7.1$ / $54.1\pm7.1$ & 34.2 [24--43] & 22.2 [14--32] \\
+Q3 & $179{,}321\pm5{,}983$ [171,814--190,359] & 219.0 / 74.0 & $91.8\pm6.3$ / $34.2\pm6.3$ & 34.2 [24--43] & 22.2 [14--32] \\
+Q3+IQR/2 & $226{,}414\pm8{,}467$ [215,803--242,028] & $247.6\pm3.2$ / $45.4\pm3.2$ & $103.8\pm4.6$ / $22.2\pm4.6$ & 34.2 [24--43] & 22.2 [14--32] \\
+\bottomrule
+\end{tabular}
+}
+\end{center}
+
+Values are mean $\pm$ SD across 10 outer splits; threshold brackets and evaluation counts show minimum--maximum where displayed.
+
+\section{Methods replacement}
+
+\loc{Page 11, lines 206--215; pages 12--16, ANN, two-stage, evaluation, and statistical methods.}
+
+\replacewith{For each of 10 prespecified random seeds (42--51), the 419 observations were randomly divided without target stratification into an outer training partition ($n=293$) and an outer test partition ($n=126$). For each outer split, Mean, Q3, and Q3 + IQR/2 cutoffs were computed from the outer-training outcomes only and then applied unchanged to the corresponding test partition. Categorical encoding and Min-Max scaling were fitted within the training/validation folds. Tree, single-ANN, and SVM hyperparameters were selected by three-fold cross-validation within the outer training partition. The Keras transfer models used a fixed 128--64 ReLU base architecture, batch size 32, and training-only target scaling. Validation-loss early stopping used at most 200 epochs with patience 20; the selected epoch count was then used to refit the segment model on all available segment-training observations.}
+
+\replacewith{The primary two-stage estimate used training-only configuration selection. Within each outer-training partition, the nine combinations of three cutoffs and three transfer strategies were compared using three-fold validation. The primary selection endpoint was RMSE at or above the training-fold Q3, with overall RMSE, MAPE, and a fixed lexical rule as tie-breakers. The selected configuration was refitted on the complete outer-training partition and evaluated once on the sealed outer test. The nine fixed configurations were retained as exploratory results and were not used to redefine the primary model after test inspection.}
+
+\replacewith{Three feature sets were evaluated on identical outer partitions: A, all 21 inputs; B, all inputs except N10, N11, N14, and N15; and C, building type plus physical and quantity variables. Seed was treated as the independent block. Paired differences used paired bootstrap confidence intervals and Wilcoxon signed-rank tests with Holm adjustment. The exploratory $3\times3$ cutoff-by-transfer design was analyzed with repeated measures by seed, and the interaction was interpreted before planned paired contrasts.}
+
+\deleteitem{The blanket statement that GridSearchCV optimized all candidate models. The transfer-learning base architecture and strategies were fixed by the corrective protocol, while tree, single-ANN, and SVM candidates were tuned within each outer training split.}
+
+\section{Corrected Table 4}
+
+\loc{Pages 16--18, Table 4 and lines 353--394.}
+
+\setcounter{table}{3}
+\begin{landscape}
+\scriptsize
+\begin{longtable}{lllccccc}
+\caption{Corrected outer-test performance across 10 seeds. RMSE values are USD. Fixed transfer configurations are exploratory; the training-selected row is the primary two-stage estimate.}\\
+\toprule
+Family & Cutoff & Strategy/model & $R^2$ & MAPE (\%) & RMSE & RMSE $\geq$ Q3 & RMSE $\geq$ Q3+IQR/2 \\
+\midrule
+\endfirsthead
+\toprule
+Family & Cutoff & Strategy/model & $R^2$ & MAPE (\%) & RMSE & RMSE $\geq$ Q3 & RMSE $\geq$ Q3+IQR/2 \\
+\midrule
+\endhead
+Single & -- & CatBoost & $0.8835\pm0.0620$ & $14.75\pm1.70$ & $35{,}247\pm12{,}614$ & $60{,}927\pm26{,}658$ & $73{,}877\pm32{,}607$ \\
+Single & -- & XGBoost & $0.8577\pm0.0453$ & $16.25\pm1.89$ & $39{,}242\pm9{,}887$ & $68{,}316\pm19{,}819$ & $81{,}946\pm24{,}353$ \\
+Single & -- & Monotonic GBM & $0.8040\pm0.0634$ & $20.96\pm4.87$ & $45{,}792\pm11{,}048$ & $74{,}961\pm23{,}159$ & $89{,}520\pm28{,}677$ \\
+\rowcolor{lightblue}Single & -- & ANN & $0.9511\pm0.0142$ & $12.41\pm1.90$ & $22{,}535\pm2{,}793$ & $36{,}683\pm6{,}181$ & $44{,}128\pm6{,}871$ \\
+\midrule
+No TL & Mean & Separate ANNs & $0.9340\pm0.0307$ & $14.86\pm4.60$ & $26{,}106\pm5{,}941$ & $40{,}102\pm12{,}127$ & $48{,}188\pm13{,}733$ \\
+No TL & Q3 & Separate ANNs & $0.8825\pm0.0617$ & $17.01\pm4.98$ & $33{,}698\pm6{,}836$ & $51{,}312\pm14{,}923$ & $58{,}529\pm15{,}908$ \\
+No TL & Q3+IQR/2 & Separate ANNs & $0.8527\pm0.0618$ & $14.36\pm2.19$ & $39{,}836\pm13{,}233$ & $70{,}192\pm23{,}261$ & $85{,}475\pm30{,}956$ \\
+\midrule
+TL exploratory & Mean & Aggressive & $0.9248\pm0.0342$ & $15.09\pm4.30$ & $27{,}440\pm4{,}801$ & $44{,}652\pm10{,}269$ & $53{,}071\pm11{,}857$ \\
+TL exploratory & Mean & Balanced & $0.9230\pm0.0351$ & $15.07\pm4.43$ & $27{,}756\pm5{,}083$ & $45{,}308\pm10{,}783$ & $54{,}549\pm13{,}004$ \\
+TL exploratory & Mean & Conservative & $0.8471\pm0.0508$ & $17.77\pm4.48$ & $40{,}327\pm9{,}432$ & $67{,}613\pm20{,}982$ & $80{,}243\pm26{,}428$ \\
+TL exploratory & Q3 & Aggressive & $0.7339\pm0.2000$ & $18.67\pm6.04$ & $48{,}545\pm21{,}362$ & $81{,}297\pm47{,}143$ & $96{,}383\pm60{,}501$ \\
+TL exploratory & Q3 & Balanced & $0.9290\pm0.0244$ & $14.92\pm3.83$ & $27{,}158\pm4{,}902$ & $43{,}266\pm10{,}190$ & $50{,}654\pm11{,}809$ \\
+TL exploratory & Q3 & Conservative & $0.8762\pm0.0343$ & $15.85\pm3.93$ & $36{,}265\pm7{,}460$ & $62{,}192\pm16{,}238$ & $71{,}820\pm21{,}550$ \\
+TL exploratory & Q3+IQR/2 & Aggressive & $0.8043\pm0.1208$ & $15.11\pm2.40$ & $44{,}121\pm15{,}581$ & $79{,}279\pm31{,}126$ & $96{,}336\pm40{,}437$ \\
+TL exploratory & Q3+IQR/2 & Balanced & $0.9132\pm0.0391$ & $13.77\pm2.12$ & $29{,}567\pm6{,}469$ & $51{,}829\pm14{,}003$ & $61{,}676\pm15{,}622$ \\
+TL exploratory & Q3+IQR/2 & Conservative & $0.9078\pm0.0233$ & $13.83\pm2.42$ & $31{,}531\pm7{,}011$ & $55{,}745\pm12{,}669$ & $66{,}823\pm17{,}322$ \\
+\rowcolor{lightred}TL primary & Training selected & Varies by seed & $0.9201\pm0.0370$ & $14.81\pm4.13$ & $28{,}235\pm6{,}186$ & $46{,}984\pm13{,}033$ & $55{,}808\pm14{,}668$ \\
+\bottomrule
+\end{longtable}
+\end{landscape}
+
+\section{Results narrative and Figures 5--7}
+
+\loc{Pages 18--20, lines 375--420; Figures 5--7.}
+
+\replacewith{Across the 10 untouched outer-test partitions, the single ANN achieved the lowest mean overall RMSE (USD 22,535) and the lowest mean high-cost RMSE values (USD 36,683 at or above the training-derived Q3 and USD 44,128 at or above the training-derived Q3 + IQR/2). The training-selected two-stage transfer-learning procedure achieved mean RMSE of USD 28,235, USD 46,984, and USD 55,808 for the same endpoints. Relative to the ANN, these values were 25.3\%, 28.1\%, and 26.5\% higher. Paired seed-level comparisons favored the ANN for $R^2$ and all RMSE endpoints after Holm adjustment; the MAPE difference was not significant after adjustment. The corrected results therefore do not support a general performance advantage for the transfer-learning procedure.}
+
+\setcounter{figure}{4}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\linewidth]{figure5_corrected_model_performance.jpg}
+\caption{Recommended replacement for Figure 5. Leakage-controlled outer-test performance across 10 seeds. Bars show means and error bars show standard deviations.}
+\end{figure}
+
+\replacewith{Figures 6 and 7 must not be used to claim general superiority from one selected run. If retained, identify seed 42 in the caption, label the plots descriptive only, and state that confirmatory comparisons use the 10 seed-level metrics.}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{figure6_corrected_residuals_seed42.jpg}
+\caption{Optional corrected Figure 6. Residuals on the prespecified seed-42 outer test. The figure is descriptive only.}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{figure7_corrected_predictions_seed42.jpg}
+\caption{Optional corrected Figure 7. Observed and predicted costs on the prespecified seed-42 outer test. The configuration was selected using outer-training data only.}
+\end{figure}
+
+\section{Figures 8--9 and classification claims}
+
+\loc{Pages 21--22, lines 434--453; Figures 8--9.}
+
+For the full-input feature set, outer-test mean precision/recall/F1 were 0.878/0.917/0.897 for Mean, 0.899/0.843/0.865 for Q3, and 0.921/0.830/0.870 for Q3+IQR/2.
+
+\replacewith{The mean cutoff produced the highest mean F1, while Q3+IQR/2 produced the highest precision but lower recall. These classifier results are descriptive and do not establish that one cutoff is universally optimal for downstream regression. The primary cutoff and transfer strategy were selected within each outer-training partition.}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.94\linewidth]{figure8_training_derived_svm_performance.jpg}
+\caption{Recommended replacement for Figure 8. SVM classification under training-derived cutoffs. Bars show means and error bars show standard deviations across 10 outer tests.}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.94\linewidth]{figure9_split_specific_class_counts.jpg}
+\caption{Recommended replacement for Figure 9. Split-specific low/high class counts under training-derived cutoffs.}
+\end{figure}
+
+\section{Replace Tables 5--6 with seed-blocked inference}
+
+\loc{Pages 20 and 22, Tables 5--6 and lines 421--463.}
+
+\deleteitem{The current Wilcoxon p-values. They pooled correlated cutoff/strategy observations beyond the 10 independent seeds. For 10 nonzero pairs, a two-sided exact Wilcoxon p-value cannot be smaller than 0.001953, whereas the manuscript reports values as small as $1.86\times10^{-9}$.}
+
+\replacewith{The exploratory $3\times3$ cutoff-by-transfer design was analyzed with seed as the repeated-measures subject. The cutoff-by-transfer interaction was significant for every reported metric. Pairwise contrasts were interpreted only after the interaction and were adjusted within planned families using Holm's method.}
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+Metric & Interaction $F$ & Numerator df & Denominator df & $p$ \\
+\midrule
+$R^2$ & 6.600 & 4 & 36 & 0.000432 \\
+MAPE & 11.538 & 4 & 36 & 0.00000395 \\
+RMSE & 6.809 & 4 & 36 & 0.000345 \\
+RMSE $\geq$ train Q3 & 4.405 & 4 & 36 & 0.00531 \\
+RMSE $\geq$ train Q3+IQR/2 & 4.157 & 4 & 36 & 0.00719 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Report the complete Holm-adjusted planned contrasts from \texttt{planned\_transfer\_contrasts.csv} in the supplement. Do not retain the broad statement that balanced transfer is universally superior.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{figure_new_training_selection_frequency.jpg}
+\caption{Recommended new figure. Training-only cutoff and transfer-strategy selections across the 10 outer seeds. No single configuration was selected in all splits.}
+\end{figure}
+
+\section{Component-cost ablation and scope of the claim}
+
+\loc{Add after corrected Table 4 and revise the Abstract, Implications, Conclusions, and title.}
+
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+Feature set & $R^2$ & MAPE (\%) & RMSE & RMSE $\geq$ Q3 & RMSE $\geq$ Q3+IQR/2 \\
+\midrule
+A: all 21 inputs & 0.9201 & 14.81 & 28,235 & 46,984 & 55,808 \\
+B: exclude four component costs & 0.7390 & 32.58 & 51,186 & 76,541 & 90,027 \\
+C: physical/quantity & 0.7183 & 31.14 & 52,854 & 82,918 & 97,296 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+For the primary two-stage procedure, removing the four component-cost inputs increased mean RMSE by USD 22,951; using the physical/quantity set increased it by USD 24,619. All ten paired metric contrasts between the full feature set and B/C in this table were Holm-significant ($p=0.00586$).
+
+\replacewith{Predictive performance depended strongly on N10, N11, N14, and N15. Because the workbook does not establish whether these monetary inputs were available at the intended decision point, the full-input results should be interpreted as conditional on component-cost information. If early availability cannot be documented, describe the task as ``conditional retrofit cost estimation using partial component-cost information'' rather than ``early-stage cost estimation.''}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{figure_new_component_cost_ablation.jpg}
+\caption{Recommended new figure. Component-cost ablation for the training-selected two-stage procedure. Bars show means and error bars show standard deviations across 10 seeds.}
+\end{figure}
+
+\section{SHAP section: delete or rerun}
+
+\loc{Pages 22--24, Section 4.2 and the original SHAP Figures 10--11.}
+
+\deleteitem{The present SHAP figures and their confirmatory interpretation. They explain the mean-cutoff balanced model selected after comparing outer-test outcomes and therefore inherit test-set model-selection bias. They also emphasize component-cost inputs without resolving their decision-point availability.}
+
+\replacewith{If interpretation remains in the manuscript, rerun SHAP for a model selected without outer-test access. The simplest defensible option is a prespecified single ANN fitted within the corrected pipeline. State that SHAP describes model associations rather than causal drivers. Report the background data, explained partition, seed/model choice, and aggregation rule. Until that analysis is complete, remove the original SHAP Figures 10--11 and lines 466--510.}
+
+\section{Implications, Figure 12, and Conclusions}
+
+\loc{Pages 25--27, lines 511--568 and Figure 12.}
+
+\replacewith{\textbf{Replacement implications paragraph:} The leakage-controlled analysis did not show that the segment-aware transfer-learning procedure improved predictive accuracy over a single ANN. Its practical value should therefore be framed as an exploratory routing architecture rather than as a superior estimator. The ablation results further show that accuracy depends strongly on four component-cost predictors. Deployment claims must specify when those values become available, whether they are preliminary or realized costs, and which feature-set model is used when they are unavailable. Generalization beyond the two observed building categories and the present regional context remains untested.}
+
+\replacewith{\textbf{Replacement conclusion bullets:}
+\begin{itemize}[leftmargin=18pt,itemsep=2pt]
+\item The single ANN was the descriptive leader under leakage-controlled outer evaluation ($R^2=0.9511$, RMSE=USD 22,535).
+\item The training-selected two-stage transfer-learning procedure did not outperform the ANN and had significantly larger overall and high-cost RMSE.
+\item Cutoff and transfer-strategy effects interacted across seeds; no single fixed configuration was uniformly selected by training-only validation.
+\item Removing component-cost inputs caused substantial performance deterioration, so early-stage applicability remains conditional on documented input timing and provenance.
+\item The present evidence supports further evaluation of segment-aware routing, but not a claim of universal or statistically established superiority.
+\end{itemize}}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{figure12_evidence_gated_implementation_workflow.jpg}
+\caption{Recommended replacement for Figure 12. Evidence-gated implementation workflow.}
+\end{figure}
+
+\section{Code, data, and supplement availability}
+
+\loc{Insert before References, but only after archiving.}
+
+\replacewith{Data and code availability: The deidentified input data or governed-access procedure, complete preprocessing and modeling code, pinned package versions, seeds 42--51, hyperparameter grids, split indices and hashes, training-derived thresholds, classifier metrics, seed-level regression metrics, row-level outer-test predictions, and component-cost ablation outputs are archived in the permanent repository identified in the final submission, together with its DOI.}
+
+Do not insert the statement until the permanent archive and identifier exist. At minimum, include the compiled seed-level metrics, predictions, thresholds, selected configurations, repeated-measures table, Holm-adjusted contrasts, verification manifest, corrected notebook, and figure sources.
+
+\section{JPG replacement package}
+
+The separate folder \texttt{output/jpg/manuscript\_260716\_replacements} contains:
+
+\begin{enumerate}[leftmargin=18pt,itemsep=2pt]
+\item \texttt{figure1\_leakage\_controlled\_workflow.jpg} -- replace Figure 1.
+\item \texttt{figure5\_corrected\_model\_performance.jpg} -- replace Figure 5.
+\item \texttt{figure6\_corrected\_residuals\_seed42.jpg} -- optional corrected Figure 6; descriptive only.
+\item \texttt{figure7\_corrected\_predictions\_seed42.jpg} -- optional corrected Figure 7; descriptive only.
+\item \texttt{figure8\_training\_derived\_svm\_performance.jpg} -- replace Figure 8.
+\item \texttt{figure9\_split\_specific\_class\_counts.jpg} -- replace Figure 9.
+\item \texttt{figure12\_evidence\_gated\_implementation\_workflow.jpg} -- replace Figure 12.
+\item \texttt{figure\_new\_component\_cost\_ablation.jpg} -- use as new Figure 11 after corrected Table 4.
+\item \texttt{figure\_new\_training\_selection\_frequency.jpg} -- use as new Figure 10 near seed-blocked configuration results.
+\end{enumerate}
+
+The original SHAP Figures 10--11 are intentionally not reproduced because a corrected prespecified SHAP analysis has not been completed. The corrected selection-frequency and component-cost-ablation plots may take those vacated figure numbers.
+
+\section{Final submission gate}
+
+\begin{itemize}[leftmargin=18pt,label=$\square$,itemsep=4pt]
+\item Replace title/abstract claims and every occurrence of 0.9566, 46\%, and 25\%.
+\item Replace Figure 1 and Table 3 with the split-first, training-derived versions.
+\item Replace Table 4 and Figures 5--9 from the corrected output package.
+\item Withdraw Tables 5--6 and insert seed-blocked repeated-measures results.
+\item Delete the original SHAP Figures 10--11; use the corrected evidence plots at those numbers, or correctly rerun and renumber a prespecified SHAP analysis.
+\item Add the component-cost ablation and document N10/N11/N14/N15 provenance.
+\item Replace Implications, Conclusions, and Figure 12.
+\item Archive data/code/results before adding the availability statement.
+\item Check that the cover letter and highlights no longer repeat withdrawn superiority claims.
+\end{itemize}
+
+\end{document}

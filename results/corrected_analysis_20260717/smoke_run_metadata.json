@@ -1,0 +1,174 @@
+{
+  "analysis": "corrected construction-cost repeated-holdout evaluation",
+  "protocol": "C:\\Users\\nhkwo\\Documents\\GitHub\\Paper-summary-faculty\\analysis\\PROTOCOL.md",
+  "created_at": "2026-07-17T08:33:11.485677+00:00",
+  "data_path": "C:\\Users\\nhkwo\\Documents\\GitHub\\Paper-summary-faculty\\Data_ML2.xlsx",
+  "data_sha256": "fd998eff9a1125a72dc8c42ebffe70da24cb312442ac9c9042faf53524b33fd6",
+  "seeds": [
+    42
+  ],
+  "feature_sets": {
+    "A_all_21": [
+      "C1",
+      "N1",
+      "N2",
+      "N3",
+      "N4",
+      "N5",
+      "N6",
+      "N7",
+      "N8",
+      "N9",
+      "N10",
+      "N11",
+      "N12",
+      "N13",
+      "N14",
+      "N15",
+      "N16",
+      "N17",
+      "N18",
+      "N19",
+      "N20"
+    ]
+  },
+  "outer_test_size": 0.3,
+  "outer_stratification": "none",
+  "regression_cv_folds": 2,
+  "classification_cv_folds": 2,
+  "configuration_selection_folds": 2,
+  "primary_selection_endpoint": "rmse_q3",
+  "selection_tie_breakers": [
+    "rmse",
+    "mape_pct",
+    "lexical"
+  ],
+  "tree_grids": {
+    "CatBoost": {
+      "depth": [
+        4,
+        6,
+        8
+      ],
+      "learning_rate": [
+        0.03,
+        0.1
+      ],
+      "iterations": [
+        300,
+        600
+      ]
+    },
+    "XGBoost": {
+      "max_depth": [
+        3,
+        5,
+        7
+      ],
+      "learning_rate": [
+        0.03,
+        0.1
+      ],
+      "n_estimators": [
+        300,
+        600
+      ]
+    },
+    "Monotonic GBM": {
+      "max_depth": [
+        3,
+        5,
+        7
+      ],
+      "learning_rate": [
+        0.03,
+        0.1
+      ],
+      "n_estimators": [
+        300,
+        600
+      ]
+    }
+  },
+  "svm_grid": {
+    "C": [
+      0.1,
+      1,
+      10,
+      50,
+      100
+    ],
+    "kernel": [
+      "rbf",
+      "linear"
+    ],
+    "gamma": [
+      "auto"
+    ]
+  },
+  "ann_grid": {
+    "layers": [
+      [
+        64
+      ],
+      [
+        128
+      ],
+      [
+        128,
+        64
+      ]
+    ],
+    "activation": [
+      "relu"
+    ],
+    "lr": [
+      0.0001,
+      0.001,
+      0.01,
+      0.05
+    ],
+    "batch_size": [
+      32,
+      64
+    ]
+  },
+  "tl_base_config": {
+    "layers": [
+      128,
+      64
+    ],
+    "activation": "relu",
+    "lr": 0.001,
+    "batch_size": 32
+  },
+  "transfer_strategies": {
+    "Conservative": {
+      "trainable_hidden": 0,
+      "lr": 0.001
+    },
+    "Balanced": {
+      "trainable_hidden": 1,
+      "lr": 0.01
+    },
+    "Aggressive": {
+      "trainable_hidden": "all",
+      "lr": 0.05
+    }
+  },
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "package_versions": {
+    "numpy": "1.26.4",
+    "pandas": "2.2.3",
+    "scipy": "1.14.1",
+    "scikit-learn": "1.5.2",
+    "statsmodels": "0.14.4",
+    "tensorflow": "2.16.1",
+    "catboost": "1.2.8",
+    "xgboost": "2.1.4",
+    "lightgbm": "4.6.0",
+    "openpyxl": "3.1.5"
+  },
+  "smoke": true
+}

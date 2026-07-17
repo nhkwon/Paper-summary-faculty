@@ -1,0 +1,17 @@
+feature_set,cutoff_rule,transfer_strategy,count,percent
+A_all_21,Mean,Aggressive,2,20.0
+A_all_21,Mean,Balanced,4,40.0
+A_all_21,Q3,Balanced,2,20.0
+A_all_21,Q3+IQR/2,Balanced,1,10.0
+A_all_21,Q3+IQR/2,Conservative,1,10.0
+B_no_component_costs,Mean,Aggressive,2,20.0
+B_no_component_costs,Mean,Balanced,2,20.0
+B_no_component_costs,Q3,Aggressive,1,10.0
+B_no_component_costs,Q3,Balanced,2,20.0
+B_no_component_costs,Q3+IQR/2,Balanced,1,10.0
+B_no_component_costs,Q3+IQR/2,Conservative,2,20.0
+C_physical_quantity,Mean,Balanced,1,10.0
+C_physical_quantity,Q3,Balanced,2,20.0
+C_physical_quantity,Q3,Conservative,3,30.0
+C_physical_quantity,Q3+IQR/2,Balanced,3,30.0
+C_physical_quantity,Q3+IQR/2,Conservative,1,10.0

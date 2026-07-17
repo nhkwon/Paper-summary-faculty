@@ -1,0 +1,42 @@
+{
+  "expected_task_count": 30,
+  "completed_task_count": 30,
+  "missing_tasks": [],
+  "unexpected_tasks": [],
+  "expected_seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "expected_feature_sets": [
+    "A_all_21",
+    "B_no_component_costs",
+    "C_physical_quantity"
+  ],
+  "model_metric_rows": 510,
+  "expected_model_metric_rows": 510,
+  "metric_duplicate_key_count": 0,
+  "nonfinite_core_metric_count": 0,
+  "split_rows_per_task_min": 419,
+  "split_rows_per_task_max": 419,
+  "all_tasks_have_419_split_rows": true,
+  "all_tasks_have_293_train_rows": true,
+  "all_tasks_have_126_test_rows": true,
+  "cross_feature_split_partitions_match": true,
+  "all_tasks_have_17_metric_rows": true,
+  "all_model_prediction_groups_have_126_rows": true,
+  "all_tasks_have_90_hyperparameter_rows": true,
+  "all_tasks_have_3_threshold_rows": true,
+  "all_tasks_have_3_svm_rows": true,
+  "all_tasks_have_1_selected_configuration": true,
+  "unique_data_sha256_count": 1,
+  "all_tasks_use_same_data_sha256": true,
+  "status": "complete"
+}
