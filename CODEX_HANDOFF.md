@@ -1,6 +1,6 @@
 # Codex 작업 재개 안내 및 현재 인수인계
 
-마지막 갱신: 2026-07-17 (Asia/Seoul)
+마지막 갱신: 2026-07-18 (Asia/Seoul)
 
 이 문서는 Codex를 종료한 뒤 같은 원고 수정 작업을 다시 시작할 때 사용하는 영구 인수인계 기록이다.
 
@@ -104,3 +104,12 @@ codex resume
 - 프로젝트 및 채팅 재개: <https://learn.chatgpt.com/docs/projects>
 - `AGENTS.md` 지속 지침: <https://learn.chatgpt.com/docs/agent-configuration/agents-md>
 
+## 9. 2026-07-18 Git push 용량 문제 해결
+
+- 원인: 미게시 로컬 커밋에 `tmp/python311/` 런타임을 포함한 `tmp/` 파일 40,116개, 약 2.98GB가 들어갔다. 가장 큰 단일 파일은 약 974MB여서 GitHub push 제한을 넘었다.
+- 조치: 기존 미게시 커밋 4개를 원격 `main` 기준의 단일 정리 커밋 `e0983712` (`Add corrected manuscript analysis and revision artifacts`)으로 재작성했다.
+- 검증: 로컬 `HEAD`, `origin/main`, GitHub 원격 `main`이 모두 `e0983712f7537b964b1ca67b98189a0e83ec9a1d`를 가리키는 것을 확인했다.
+- 보존: 원본 `(4) Manuscript_260716-01.pdf`의 변경 차이는 0이며, 기존 원고·분석 산출물과 실제 `tmp/` 작업 파일은 삭제하지 않았다.
+- 예방: 루트 `.gitignore`를 추가하여 `tmp/`, 새 `node_modules/`, Python 캐시, 로그가 다시 커밋되지 않도록 했다. 기존에 추적되던 `tmp/` QA 중간물은 디스크에 유지한 채 Git 추적에서만 제외했다.
+- 용량 회수: 원격 검증 후 임시 백업 브랜치와 잘못된 객체를 제거하고 Git GC를 실행했다. 로컬 pack 크기는 887.86MiB에서 48.31MiB로 감소했다.
+- 다음 안전한 작업: `output/pdf/verified_corrected_analysis_revision_guide_v4_blue.pdf`를 기준으로 원고 수정을 재개한다. 다음 commit 전에는 `git status`와 대용량 파일 목록을 확인하고, 원본 PDF는 계속 수정하지 않는다.
