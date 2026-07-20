@@ -113,3 +113,16 @@ codex resume
 - 예방: 루트 `.gitignore`를 추가하여 `tmp/`, 새 `node_modules/`, Python 캐시, 로그가 다시 커밋되지 않도록 했다. 기존에 추적되던 `tmp/` QA 중간물은 디스크에 유지한 채 Git 추적에서만 제외했다.
 - 용량 회수: 원격 검증 후 임시 백업 브랜치와 잘못된 객체를 제거하고 Git GC를 실행했다. 로컬 pack 크기는 887.86MiB에서 48.31MiB로 감소했다.
 - 다음 안전한 작업: `output/pdf/verified_corrected_analysis_revision_guide_v4_blue.pdf`를 기준으로 원고 수정을 재개한다. 다음 commit 전에는 `git status`와 대용량 파일 목록을 확인하고, 원본 PDF는 계속 수정하지 않는다.
+## 10. 2026-07-20 transfer to nhkwon-s-paper
+
+- Request handled: transfer work files from `C:\Users\USER\Documents\GitHub\Paper_summary_faculty\Paper-summary-faculty` to `C:\Users\USER\Documents\GitHub\nhkwon-s-paper`.
+- Date window used: files with `LastWriteTime` from `2026-07-16 00:00:00` through `2026-07-20 23:59:59`.
+- Destination folder created: `C:\Users\USER\Documents\GitHub\nhkwon-s-paper\paper-summary-faculty_20260716-20260720`.
+- Copied locally: 381 source files, plus `TRANSFER_README.md` and `TRANSFER_MANIFEST_20260716-20260720.csv`; total copied tree size after manifest/readme was about 59.5 MiB.
+- Excluded intentionally: `.git`, `node_modules`, `tmp`, `__pycache__`, `.venv`, and `venv`.
+- Source originals were preserved. Original manuscript PDFs, including `(4) Manuscript_260716-01.pdf`, were copied only and not edited.
+- Target repo status: `C:\Users\USER\Documents\GitHub\nhkwon-s-paper` was initialized as a local Git repo on branch `main`.
+- Target commit created: `2cdd894 Add transferred manuscript revision files`.
+- Target remote configured: `https://github.com/nhkwon/nhkwon-s-paper.git`.
+- GitHub push status: push failed because GitHub returned `Repository not found`; `nhkwon/nhkwon-s-paper` does not currently exist in the connected GitHub repository list.
+- Next safe action: create the GitHub repository `nhkwon/nhkwon-s-paper` in the GitHub web dashboard or provide a different existing repo URL, then run `git push -u origin main` from `C:\Users\USER\Documents\GitHub\nhkwon-s-paper`.
